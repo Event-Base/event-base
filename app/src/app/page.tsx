@@ -1,11 +1,11 @@
-"use client"
-import { useSession } from "next-auth/react";
+import { auth } from "@/auth";
 
-export default  function Home() {
-  const { data: session, status, update } = useSession()
+export default async  function Home() {
+  const session = await auth();
+  const user = session?.user
     return(
       <div>
-        <p className="text-white">{session?.user?.name || "no user"}</p>
+        <p >{user ? user.name : "No user"}</p>
       </div>
     );
         
