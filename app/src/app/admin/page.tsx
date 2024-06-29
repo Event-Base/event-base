@@ -3,8 +3,8 @@ import { UserRole } from "@prisma/client";
 import { notFound } from "next/navigation";
 export default async function Admin() {
     const session = await getSession();
-    if(!session || session.user.role !== UserRole.ADMIN){
-        return notFound()
+    if (!session || session.user.role !== UserRole.ADMIN) {
+        return notFound();
     }
     return (
         <>
