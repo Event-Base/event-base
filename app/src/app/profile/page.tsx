@@ -1,7 +1,8 @@
 import { auth } from "@/auth";
+import getSession from "@/lib/getSession";
 
 export default async function Profile() {
-  const session = await auth();
+  const session = await getSession();
   const events = [
     { id: 1, name: "Event1", date: "2024-07-01" },
     { id: 2, name: "Event2", date: "2024-08-15" },

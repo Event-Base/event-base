@@ -1,9 +1,10 @@
 import { auth } from "@/auth";
 import Link from "next/link";
+import getSession from "@/lib/getSession";
 
 
 export default async function Home() {
-    const session = await auth();
+    const session = await getSession();
     const user = session?.user;
     
     return (
