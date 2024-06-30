@@ -2,8 +2,7 @@
 import prisma from "@/lib/db";
 import { UserRole } from "@prisma/client";
 
-export default async function updateUserRole(id:string) {
-
+export default async function updateUserRole(id: string) {
     const user = await prisma.user.findUnique({
         where: {
             id,
@@ -16,10 +15,10 @@ export default async function updateUserRole(id:string) {
 
     await prisma.user.update({
         where: {
-            id 
+            id,
         },
         data: {
-            role
-        }
-    })
+            role,
+        },
+    });
 }
