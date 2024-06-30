@@ -23,7 +23,8 @@ import {
   CommandItem,
 } from "@/components/ui/command";
 import { PrismaClient } from "@prisma/client";
-import {makeAdmin,makeParticipant} from "@/app/actions";
+import { makeAdmin, makeParticipant } from "@/app/actions";
+import ChangeRole from "./ChangeRole";
 
 const prisma = new PrismaClient();
 
@@ -77,10 +78,9 @@ export default async function UsersList() {
                           <ChevronDownIcon className="w-4 h-4 ml-2 text-muted-foreground" />
                         </Button>
                       </PopoverTrigger>
-                      <PopoverContent
-                        className="p-0"
-                        align="end"
-                      ></PopoverContent>
+                      <PopoverContent className="w-auto p-0" align="center">
+                        <ChangeRole userId={user.id} userRole={user.role} />
+                      </PopoverContent>
                     </Popover>
                   </div>
                 ))}
