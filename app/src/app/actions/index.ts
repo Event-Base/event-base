@@ -2,28 +2,23 @@
 import prisma from "@/lib/db";
 import { UserRole } from "@prisma/client";
 
-export default async function updateUserRole(id: string) {
+async function updateUserRole(id: string, role: UserRole) {
     try {
-        const user = await prisma.user.findUnique({
+        const updatedUser = await prisma.user.update({
             where: { id },
+            data: { role },
         });
-
-        if (!user) {
-            console.error("User not found");
-            return false;
-        }
-
-    
-        const newRole = user.role === UserRole.ADMIN ? UserRole.PARTICIPANT : UserRole.ADMIN;
-
-        await prisma.user.update({
-            where: { id },
-            data: { role: newRole },
-        });
-
-        return true;
+        return updatedUser;
     } catch (error) {
         console.error("Error updating user role:", error);
-        return false;
+        return null;
     }
+}
+
+export async function makeAdmin(id: string) {
+    return await updateUserRole(id, UserRole.ADMIN);
+}
+
+export async function makeParticipant(id: string) {
+    return await updateUserRole(id, UserRole.PARTICIPANT);
 }
