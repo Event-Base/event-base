@@ -23,7 +23,7 @@ import {
   CommandItem,
 } from "@/components/ui/command";
 import { PrismaClient } from "@prisma/client";
-import updateUserRole from "@/app/actions";
+import {makeAdmin,makeParticipant} from "@/app/actions";
 
 const prisma = new PrismaClient();
 
