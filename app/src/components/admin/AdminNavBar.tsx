@@ -20,6 +20,15 @@ export default function AdminNavBar({ session }: { session: any }) {
           <CalendarIcon className="h-6 w-6" />
           <span className="sr-only">Event App</span>
         </Link>
+        <Link
+          href="/admin/events"
+          className="hidden sm:block ml-5 font-semibold"
+        >
+          Events
+        </Link>
+        <Link href="/admin/users" className="hidden sm:block font-semibold">
+          Users
+        </Link>
         <div className="ml-auto flex items-center gap-4">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
