@@ -14,6 +14,7 @@ import {
   TableBody,
   TableCell,
 } from "@/components/ui/table";
+import Link from "next/link";
 
 export default function AdminEventList() {
   return (
@@ -29,7 +30,9 @@ export default function AdminEventList() {
                 className="pl-8 sm:w-[200px] md:w-[300px]"
               />
             </div>
-            <Button variant="outline">Create Event</Button>
+            <Button variant="outline" asChild>
+              <Link href="/admin/events/create">Create Event</Link>
+            </Button>
           </div>
           <div className="border shadow-sm rounded-lg p-2">
             <Table>
