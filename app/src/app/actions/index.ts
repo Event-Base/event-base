@@ -34,8 +34,9 @@ export async function createEvent(formData: FormData) {
         const email = formData.get("email") as string;
         const dateTime = `${date}T${time}:00`;
         const formattedDate = new Date(dateTime).toISOString().slice(0, 19).replace("T", " ");
+        const location = formData.get("location") as string;
 
-        if (!name || !description || !date) {
+        if (!name || !description || !formattedDate) {
             throw new Error("Missing required fields");
         }
 
@@ -43,9 +44,9 @@ export async function createEvent(formData: FormData) {
             data: {
                 name,
                 description,
+                location,
                 date: new Date(formattedDate),
                 coordinatorEmail: email,
-                location: "tteset",
             },
         });
 
