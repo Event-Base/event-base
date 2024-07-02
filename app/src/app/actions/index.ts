@@ -24,3 +24,37 @@ export async function makeAdmin(id: string) {
 export async function makeParticipant(id: string) {
     return await updateUserRole(id, UserRole.PARTICIPANT);
 }
+
+export async function createEvent(formData: FormData) {
+    try {
+        const name = formData.get("name") as string;
+        const description = formData.get("description") as string;
+        const date = formData.get("date") as string;
+        const time = formData.get("time") as string;
+        const email = formData.get("email") as string;
+        const dateTime = `${date}T${time}:00`;
+        const formattedDate = new Date(dateTime).toISOString().slice(0, 19).replace("T", " ");
+        const location = formData.get("location") as string;
+
+        if (!name || !description || !formattedDate) {
+            throw new Error("Missing required fields");
+        }
+
+        const events = await prisma.event.create({
+            data: {
+                name,
+                description,
+                location,
+                date: new Date(formattedDate),
+                coordinatorEmail: email,
+            },
+        });
+
+        await revalidatePath("/admin/events");
+
+        return events;
+    } catch (error) {
+        console.error("Error creating event:", error);
+        return { error: "Failed to create event" };
+    }
+}

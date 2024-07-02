@@ -47,12 +47,28 @@ model User {
   name          String?
   email         String?   @unique
   role          UserRole  @default(PARTICIPANT)
+  events        Event[]
   emailVerified DateTime? @map("email_verified")
   image         String?
   accounts      Account[]
   sessions      Session[]
 
   @@map("users")
+}
+
+
+
+model Event {
+  id               String   @id @default(cuid())
+  name             String
+  description      String
+  date             DateTime
+  location         String
+  coordinator      User?    @relation(fields: [coordinatorEmail], references: [email])
+  coordinatorEmail String?  @map("coordinator_email")
+  createdAt        DateTime @default(now())
+
+  @@map("events")
 }
 
 model VerificationToken {
