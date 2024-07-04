@@ -25,7 +25,7 @@ export async function makeParticipant(id: string) {
     return await updateUserRole(id, UserRole.PARTICIPANT);
 }
 
-export async function createEvent(formData: FormData) {
+export async function createEvent(currentState: { message: string; success: boolean }, formData: FormData) {
     try {
         const name = formData.get("name") as string;
         const description = formData.get("description") as string;
@@ -52,9 +52,8 @@ export async function createEvent(formData: FormData) {
 
         await revalidatePath("/admin/events");
 
-        return events;
+        return { message: "Event added successfully", success: true };
     } catch (error) {
-        console.error("Error creating event:", error);
-        return { error: "Failed to create event" };
+        return { message: "Failed to create event", success: false };
     }
 }
