@@ -1,11 +1,32 @@
+"use client";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { createEvent } from "@/app/actions";
+import { useFormState } from "react-dom";
+import { toast } from "@/components/ui/use-toast";
 
 export default function Create() {
+    const initialState = {
+        message: "",
+        success: true,
+    };
+    const [formState, formAction] = useFormState(createEvent, initialState);
+
+    const { message, success } = formState;
+    if (success) {
+        toast({
+            title: message,
+        });
+    } else {
+        toast({
+            title: message,
+            variant: "destructive",
+        });
+    }
+
     return (
         <div className="flex justify-center min-h-screen w-full flex-col bg-muted/20">
             <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
@@ -17,7 +38,7 @@ export default function Create() {
                             <CardDescription>Create an Event</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <form className="grid gap-6" action={createEvent}>
+                            <form className="grid gap-6" action={formAction}>
                                 <div className="grid gap-3">
                                     <Label htmlFor="name">Event Name</Label>
                                     <Input id="name" type="text" name="name" defaultValue="Event Name" />
@@ -33,7 +54,12 @@ export default function Create() {
                                 </div>
                                 <div className="grid gap-3">
                                     <Label htmlFor="name">Coordinator Email id</Label>
-                                    <Input id="email" type="text" name="email" defaultValue="Coordinator Email id" />
+                                    <Input
+                                        id="email"
+                                        type="text"
+                                        name="email"
+                                        defaultValue="Coordinator Email id"
+                                    />
                                 </div>
                                 <div className="grid gap-3">
                                     <Label htmlFor="date">Date</Label>
