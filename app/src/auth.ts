@@ -1,8 +1,8 @@
-import NextAuth, { DefaultSession } from "next-auth";
 import prisma from "@/lib/db";
-import Google, { GoogleProfile } from "next-auth/providers/google";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { UserRole } from "@prisma/client";
+import NextAuth, { type DefaultSession } from "next-auth";
+import Google, { GoogleProfile } from "next-auth/providers/google";
 import { JWT } from "next-auth/jwt";
 
 declare module "next-auth" {
@@ -18,8 +18,24 @@ declare module "next-auth/jwt" {
         role: UserRole;
     }
 }
-export const { handlers, signIn, signOut, auth } = NextAuth({
+
+export const { handlers, auth, signIn, signOut } = NextAuth({
     adapter: PrismaAdapter(prisma),
+    secret: process.env.AUTH_SECRET,
+    session: {
+        strategy: "jwt",
+    },
+    cookies: {
+        pkceCodeVerifier: {
+            name: "next-auth.pkce.code_verifier",
+            options: {
+                httpOnly: true,
+                sameSite: "none",
+                path: "/",
+                secure: true,
+            },
+        },
+    },
     providers: [
         Google({
             profile(profile: GoogleProfile) {
@@ -34,9 +50,22 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }),
     ],
     callbacks: {
-        async session({ session, token }) {
+        async jwt({ token }) {
+            if (!token.sub) return token;
+            const user = await prisma.user.findUnique({
+                where: { id: token.sub },
+            });
+            if (!user) return token;
+            token.role = user.role;
+            return token;
+        },
+        session({ session, token }) {
             return {
                 ...session,
+                user: {
+                    ...session.user,
+                    role: token.role,
+                },
             };
         },
     },
