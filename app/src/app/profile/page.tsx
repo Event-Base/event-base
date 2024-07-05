@@ -1,4 +1,3 @@
-import { auth } from "@/auth";
 import getSession from "@/lib/getSession";
 
 export default async function Profile() {

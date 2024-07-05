@@ -1,7 +1,5 @@
-import { PrismaClient } from "@prisma/client";
+import prisma from "@/lib/db";
 import EventCard from "@/components/events/EventCard";
-
-const prisma = new PrismaClient();
 
 export default async function Component() {
   const events = await prisma.event.findMany();

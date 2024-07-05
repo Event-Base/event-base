@@ -11,22 +11,9 @@ import {
   PopoverTrigger,
   PopoverContent,
 } from "@/components/ui/popover";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import {
-  Command,
-  CommandInput,
-  CommandList,
-  CommandEmpty,
-  CommandGroup,
-  CommandItem,
-} from "@/components/ui/command";
-import { PrismaClient } from "@prisma/client";
-import { makeAdmin, makeParticipant } from "@/app/actions";
 import ChangeRole from "./ChangeRole";
-
-const prisma = new PrismaClient();
+import prisma from "@/lib/db";
 
 export async function getServerSideProps() {
   const users = await prisma.user.findMany();
