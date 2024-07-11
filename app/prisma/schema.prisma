@@ -74,6 +74,7 @@ model Event {
   description      String
   date             DateTime
   location         String
+  isTeamEvent      Boolean  @default(false) @map("is_team_event")
   coordinator      User?    @relation(fields: [coordinatorEmail], references: [email])
   coordinatorEmail String?  @map("coordinator_email")
   createdAt        DateTime @default(now())
