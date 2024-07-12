@@ -1,9 +1,11 @@
 import Dashboard from "@/components/dashboard/Dashboad";
+import getSession from "@/lib/getSession";
+const page = async () => {
+    const session = await getSession();
 
-const page = () => {
     return (
         <div>
-            <Dashboard />
+            <Dashboard session={session} />
         </div>
     );
 };
