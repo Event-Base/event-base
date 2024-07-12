@@ -7,26 +7,20 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum UserRole {
-  PARTICIPANT
-  ADMIN
-}
-
 model Account {
   id                String  @id @default(cuid())
   userId            String  @map("user_id")
   type              String
   provider          String
   providerAccountId String  @map("provider_account_id")
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
   @@map("accounts")
@@ -43,16 +37,17 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String         @id @default(cuid())
   name          String?
-  email         String?   @unique
-  role          UserRole  @default(PARTICIPANT)
-  events        Event[]
-  leader        Team?
-  emailVerified DateTime? @map("email_verified")
+  email         String?        @unique
+  role          UserRole       @default(PARTICIPANT)
+  emailVerified DateTime?      @map("email_verified")
   image         String?
   accounts      Account[]
+  events        Event[]
+  registrations Registration[]
   sessions      Session[]
+  leader        Team?
 
   @@map("users")
 }
@@ -61,26 +56,39 @@ model Team {
   id       String @id @default(cuid())
   name     String
   eventId  String @map("event_id")
-  event    Event  @relation(fields: [eventId], references: [id])
   leaderId String @unique
+  event    Event  @relation(fields: [eventId], references: [id])
   leader   User   @relation(fields: [leaderId], references: [id])
 
   @@map("teams")
 }
 
 model Event {
-  id               String   @id @default(cuid())
-  name             String   @unique
+  id               String         @id @default(cuid())
+  name             String         @unique
   description      String
   date             DateTime
   location         String
-  isTeamEvent      Boolean  @default(false) @map("is_team_event")
-  coordinator      User?    @relation(fields: [coordinatorEmail], references: [email])
-  coordinatorEmail String?  @map("coordinator_email")
-  createdAt        DateTime @default(now())
+  coordinatorEmail String?        @map("coordinator_email")
+  createdAt        DateTime       @default(now())
+  isTeamEvent      Boolean        @default(false) @map("is_team_event")
+  coordinator      User?          @relation(fields: [coordinatorEmail], references: [email])
+  registrations    Registration[]
   teams            Team[]
 
   @@map("events")
+}
+
+model Registration {
+  id       String  @id @default(cuid())
+  userId   String
+  eventId  String
+  attended Boolean @default(false)
+  event    Event   @relation(fields: [eventId], references: [id])
+  user     User    @relation(fields: [userId], references: [id])
+
+  @@unique([userId, eventId])
+  @@map("registrations")
 }
 
 model VerificationToken {
@@ -90,4 +98,9 @@ model VerificationToken {
 
   @@unique([identifier, token])
   @@map("verificationtokens")
+}
+
+enum UserRole {
+  PARTICIPANT
+  ADMIN
 }

@@ -86,3 +86,17 @@ export async function getIndividualEventDetails(name: string): Promise<getIndivi
 
     return events as getIndividualEventDetailsProp;
 }
+
+export async function registerForEvent(eventId: string, userId: string) {
+    try {
+        await prisma.registration.create({
+            data: {
+                userId, eventId, attended: false
+            },
+        });
+
+        return { message: "Registered successfully", success: true };
+    } catch (error: any) {
+        return { message: error.message, success: false };
+    }
+}
