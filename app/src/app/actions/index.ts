@@ -57,3 +57,15 @@ export async function createEvent(currentState: { message: string; success: bool
         return { message: "Failed to create event", success: false };
     }
 }
+
+export async function getEventDetails(email : string){
+
+    const events = await prisma.event.findMany({
+        where: {
+            coordinatorEmail: email
+        }
+    })
+
+    console.log(events)
+
+}
