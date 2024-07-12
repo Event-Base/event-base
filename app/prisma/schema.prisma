@@ -70,7 +70,7 @@ model Team {
 
 model Event {
   id               String   @id @default(cuid())
-  name             String
+  name             String   @unique
   description      String
   date             DateTime
   location         String

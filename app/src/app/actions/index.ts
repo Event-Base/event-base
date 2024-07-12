@@ -1,5 +1,6 @@
 "use server";
 import prisma from "@/lib/db";
+import { getIndividualEventDetailsProp } from "@/types";
 import { UserRole } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
@@ -58,14 +59,30 @@ export async function createEvent(currentState: { message: string; success: bool
     }
 }
 
-export async function getEventDetails(email : string){
-
+export async function getEventDetails(email: string) {
     const events = await prisma.event.findMany({
         where: {
-            coordinatorEmail: email
-        }
-    })
+            coordinatorEmail: email,
+        },
+    });
 
-    console.log(events)
+    console.log(events);
+}
 
+export async function getIndividualEventDetails(name: string): Promise<getIndividualEventDetailsProp | null> {
+    const eventName = name.replace(/-/g, " ");
+    const events = await prisma.event.findUnique({
+        where: {
+            name: eventName,
+        },
+        select: {
+            id: true,
+            name: true,
+            location: true,
+            date: true,
+            coordinatorEmail: true,
+        },
+    });
+
+    return events as getIndividualEventDetailsProp;
 }
