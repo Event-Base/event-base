@@ -37,7 +37,6 @@ import { getRemainingDay } from "@/lib/helper";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 
-
 export const description =
     "An application shell with a header and main content area. The header has a navbar, a search input and and a user nav dropdown. The user nav is toggled by a button with an avatar image.";
 
@@ -55,9 +54,9 @@ export default function Dashboard({ session }: any) {
         queryFn: async () => await getIndividualEventDetails(eventName as string),
     });
 
-    if(session.user.email !== data?.coordinatorEmail){
-        return notFound()
-    }
+    // if(session.user.email !== data?.coordinatorEmail){
+    //     return notFound()
+    // }
 
     const chartData = [
         { day: "01", registration: 186 },
@@ -91,7 +90,7 @@ export default function Dashboard({ session }: any) {
         { day: "30", registration: 184 },
         { day: "31", registration: 231 },
     ];
-    
+
     const chartConfig = {
         desktop: {
             label: "Desktop",
@@ -261,7 +260,7 @@ export default function Dashboard({ session }: any) {
                                         content={<ChartTooltipContent hideLabel />}
                                     />
                                     <Line
-                                        dataKey="count"
+                                        dataKey="registration"
                                         type="linear"
                                         stroke="var(--color-desktop)"
                                         strokeWidth={2}
@@ -278,68 +277,6 @@ export default function Dashboard({ session }: any) {
           Showing total visitors for the last 6 months
         </div>
       </CardFooter> */}
-                    </Card>
-                    <Card x-chunk="A card showing a list of recent sales with customer names and email addresses.">
-                        <CardHeader>
-                            <CardTitle>Recent Sales</CardTitle>
-                        </CardHeader>
-                        <CardContent className="grid gap-8">
-                            <div className="flex items-center gap-4">
-                                <Avatar className="hidden h-9 w-9 sm:flex">
-                                    <AvatarImage src={session.user?.image} alt="Avatar" />
-                                    <AvatarFallback>OM</AvatarFallback>
-                                </Avatar>
-                                <div className="grid gap-1">
-                                    <p className="text-sm font-medium leading-none">Olivia Martin</p>
-                                    <p className="text-sm text-muted-foreground">olivia.martin@email.com</p>
-                                </div>
-                                <div className="ml-auto font-medium">+$1,999.00</div>
-                            </div>
-                            <div className="flex items-center gap-4">
-                                <Avatar className="hidden h-9 w-9 sm:flex">
-                                    <AvatarImage src={session.user?.image} alt="Avatar" />
-                                    <AvatarFallback>JL</AvatarFallback>
-                                </Avatar>
-                                <div className="grid gap-1">
-                                    <p className="text-sm font-medium leading-none">Jackson Lee</p>
-                                    <p className="text-sm text-muted-foreground">jackson.lee@email.com</p>
-                                </div>
-                                <div className="ml-auto font-medium">+$39.00</div>
-                            </div>
-                            <div className="flex items-center gap-4">
-                                <Avatar className="hidden h-9 w-9 sm:flex">
-                                    <AvatarImage src={session.user?.image} alt="Avatar" />
-                                    <AvatarFallback>IN</AvatarFallback>
-                                </Avatar>
-                                <div className="grid gap-1">
-                                    <p className="text-sm font-medium leading-none">Isabella Nguyen</p>
-                                    <p className="text-sm text-muted-foreground">isabella.nguyen@email.com</p>
-                                </div>
-                                <div className="ml-auto font-medium">+$299.00</div>
-                            </div>
-                            <div className="flex items-center gap-4">
-                                <Avatar className="hidden h-9 w-9 sm:flex">
-                                    <AvatarImage src={session.user?.image} alt="Avatar" />
-                                    <AvatarFallback>WK</AvatarFallback>
-                                </Avatar>
-                                <div className="grid gap-1">
-                                    <p className="text-sm font-medium leading-none">William Kim</p>
-                                    <p className="text-sm text-muted-foreground">will@email.com</p>
-                                </div>
-                                <div className="ml-auto font-medium">+$99.00</div>
-                            </div>
-                            <div className="flex items-center gap-4">
-                                <Avatar className="hidden h-9 w-9 sm:flex">
-                                    <AvatarImage src={session.user?.image} alt="Avatar" />
-                                    <AvatarFallback>SD</AvatarFallback>
-                                </Avatar>
-                                <div className="grid gap-1">
-                                    <p className="text-sm font-medium leading-none">Sofia Davis</p>
-                                    <p className="text-sm text-muted-foreground">sofia.davis@email.com</p>
-                                </div>
-                                <div className="ml-auto font-medium">+$39.00</div>
-                            </div>
-                        </CardContent>
                     </Card>
                 </div>
             </main>
