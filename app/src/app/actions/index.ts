@@ -81,10 +81,22 @@ export async function getIndividualEventDetails(name: string): Promise<getIndivi
             location: true,
             date: true,
             coordinatorEmail: true,
+            registrations: {
+                select: {
+                    id: true,
+                },
+            },
         },
     });
+    //get the count of registration
 
-    return events as getIndividualEventDetailsProp;
+    const count = events?.registrations.length ?? 0;
+    const eventWithCount = {
+        ...events,
+        count,
+    };
+
+    return eventWithCount as getIndividualEventDetailsProp;
 }
 
 export async function registerForEvent(eventId: string, userId: string) {

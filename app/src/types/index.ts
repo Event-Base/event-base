@@ -4,4 +4,5 @@ export type getIndividualEventDetailsProp = {
     date: Date;
     location: string;
     coordinatorEmail: string;
+    count: number;
 };
