@@ -37,6 +37,7 @@ import { getRemainingDay } from "@/lib/helper";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 
+
 export const description =
     "An application shell with a header and main content area. The header has a navbar, a search input and and a user nav dropdown. The user nav is toggled by a button with an avatar image.";
 
@@ -46,12 +47,17 @@ export const containerClassName = "w-full h-full";
 
 export default function Dashboard({ session }: any) {
     const pathname = usePathname();
+
     //take only the last name
     const eventName = pathname.replace(/%20/g, "-").split("/").pop();
     const { data, error, isLoading } = useQuery<getIndividualEventDetailsProp | null, Error>({
         queryKey: ["student"],
         queryFn: async () => await getIndividualEventDetails(eventName as string),
     });
+
+    if(session.user.email !== data?.coordinatorEmail){
+        return notFound()
+    }
 
     const chartData = [
         { day: "01", registration: 186 },
@@ -85,7 +91,7 @@ export default function Dashboard({ session }: any) {
         { day: "30", registration: 184 },
         { day: "31", registration: 231 },
     ];
-
+    
     const chartConfig = {
         desktop: {
             label: "Desktop",
@@ -93,9 +99,7 @@ export default function Dashboard({ session }: any) {
         },
     } satisfies ChartConfig;
 
-    const remainingDay = getRemainingDay(data?.date.toDateString() as string );
-    
-    
+    const remainingDay = getRemainingDay((data?.date.toDateString() as string) ?? "");
 
     return (
         <div className="flex min-h-screen w-full flex-col">
@@ -191,7 +195,7 @@ export default function Dashboard({ session }: any) {
                             <CardTitle className="text-sm font-medium">Total Registration</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">0</div>
+                            <div className="text-2xl font-bold">{data?.count ?? 0}</div>
                             <p className="text-xs text-muted-foreground"></p>
                         </CardContent>
                     </Card>
@@ -257,7 +261,7 @@ export default function Dashboard({ session }: any) {
                                         content={<ChartTooltipContent hideLabel />}
                                     />
                                     <Line
-                                        dataKey="registration"
+                                        dataKey="count"
                                         type="linear"
                                         stroke="var(--color-desktop)"
                                         strokeWidth={2}
