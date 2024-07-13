@@ -66,7 +66,7 @@ export async function getEventDetails(email: string) {
         },
     });
 
-    console.log(events);
+    return events;
 }
 
 export async function getIndividualEventDetails(name: string): Promise<getIndividualEventDetailsProp | null> {
@@ -91,7 +91,9 @@ export async function registerForEvent(eventId: string, userId: string) {
     try {
         await prisma.registration.create({
             data: {
-                userId, eventId, attended: false
+                userId,
+                eventId,
+                attended: false,
             },
         });
 

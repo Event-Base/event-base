@@ -21,7 +21,7 @@ export default async function Component() {
                         </div>
                         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                             {events.map((event) => (
-                                <EventCard buttonTitle="Register" event={event} key={event.id}/>
+                                <EventCard buttonTitle="Register" href={`/events/register/${event.id}`} event={event} key={event.id}/>
                             ))}
                         </div>
                     </div>
