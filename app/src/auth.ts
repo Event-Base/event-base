@@ -50,6 +50,18 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         }),
     ],
     callbacks: {
+        // to allow only people with sjec email id
+        
+        // async signIn({ user , account, profile , credentials}) {
+        //     const email = profile?.email as string | undefined
+        //     const allowedEmailDomain = "sjec.ac.in"
+        //     if (email && email?.endsWith(`@${allowedEmailDomain}`)) {
+        //         return true;
+        //       } else {
+        //         return false;
+        //       }
+            
+        // },
         async jwt({ token }) {
             if (!token.sub) return token;
             const user = await prisma.user.findUnique({
