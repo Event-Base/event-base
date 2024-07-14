@@ -84,6 +84,7 @@ model Registration {
   userId   String
   eventId  String
   attended Boolean @default(false)
+  createdAt        DateTime       @default(now())
   event    Event   @relation(fields: [eventId], references: [id])
   user     User    @relation(fields: [userId], references: [id])
 

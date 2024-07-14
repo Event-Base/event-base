@@ -32,7 +32,7 @@ import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
 import { getIndividualEventDetailsProp } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import { getIndividualEventDetails } from "@/app/actions";
-import { getRemainingDay } from "@/lib/helper";
+import { calculateDailyCounts, generateDatesArray, getRemainingDay, mapRegistrationData } from "@/lib/helper";
 
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
@@ -57,39 +57,55 @@ export default function Dashboard({ session }: any) {
     // if(session.user.email !== data?.coordinatorEmail){
     //     return notFound()
     // }
-
-    const chartData = [
+    let chartData = [
         { day: "01", registration: 186 },
-        { day: "02", registration: 187 },
-        { day: "04", registration: 188 },
-        { day: "05", registration: 189 },
-        { day: "06", registration: 190 },
-        { day: "07", registration: 191 },
-        { day: "08", registration: 192 },
-        { day: "09", registration: 193 },
-        { day: "10", registration: 289 },
-        { day: "11", registration: 134 },
-        { day: "12", registration: 201 },
-        { day: "13", registration: 260 },
-        { day: "14", registration: 178 },
-        { day: "15", registration: 332 },
-        { day: "16", registration: 147 },
-        { day: "17", registration: 265 },
-        { day: "18", registration: 94 },
-        { day: "19", registration: 220 },
-        { day: "20", registration: 185 },
-        { day: "21", registration: 312 },
-        { day: "22", registration: 150 },
-        { day: "23", registration: 273 },
-        { day: "24", registration: 200 },
-        { day: "25", registration: 245 },
-        { day: "26", registration: 176 },
-        { day: "27", registration: 288 },
-        { day: "28", registration: 215 },
-        { day: "29", registration: 299 },
-        { day: "30", registration: 184 },
-        { day: "31", registration: 231 },
-    ];
+    ]
+    async function getDynamicChartData() {
+        const { date,createdAt,registrations } = data??{};
+
+        const datesArray = generateDatesArray(createdAt ?? new Date(), date ?? new Date());
+    const dailyCounts = calculateDailyCounts(registrations ?? []);
+    const dynamicChartData = mapRegistrationData(datesArray, dailyCounts);
+
+    chartData =  dynamicChartData;
+    }
+
+    getDynamicChartData()
+
+
+
+    // const chartData = [
+    //     { day: "01", registration: 186 },
+    //     { day: "02", registration: 187 },
+    //     { day: "04", registration: 188 },
+    //     { day: "05", registration: 189 },
+    //     { day: "06", registration: 190 },
+    //     { day: "07", registration: 191 },
+    //     { day: "08", registration: 192 },
+    //     { day: "09", registration: 193 },
+    //     { day: "10", registration: 289 },
+    //     { day: "11", registration: 134 },
+    //     { day: "12", registration: 201 },
+    //     { day: "13", registration: 260 },
+    //     { day: "14", registration: 178 },
+    //     { day: "15", registration: 332 },
+    //     { day: "16", registration: 147 },
+    //     { day: "17", registration: 265 },
+    //     { day: "18", registration: 94 },
+    //     { day: "19", registration: 220 },
+    //     { day: "20", registration: 185 },
+    //     { day: "21", registration: 312 },
+    //     { day: "22", registration: 150 },
+    //     { day: "23", registration: 273 },
+    //     { day: "24", registration: 200 },
+    //     { day: "25", registration: 245 },
+    //     { day: "26", registration: 176 },
+    //     { day: "27", registration: 288 },
+    //     { day: "28", registration: 215 },
+    //     { day: "29", registration: 299 },
+    //     { day: "30", registration: 184 },
+    //     { day: "31", registration: 231 },
+    // ];
 
     const chartConfig = {
         desktop: {
@@ -102,7 +118,7 @@ export default function Dashboard({ session }: any) {
 
     return (
         <div className="flex min-h-screen w-full flex-col">
-            <header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
+            <header className="sticky z-50 top-0 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
                 <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
                     <Link href="#" className="flex items-center gap-2 text-lg font-semibold md:text-base">
                         <Package2 className="h-6 w-6" />
