@@ -81,9 +81,11 @@ export async function getIndividualEventDetails(name: string): Promise<getIndivi
             location: true,
             date: true,
             coordinatorEmail: true,
+            createdAt:true,
             registrations: {
                 select: {
                     id: true,
+                    createdAt:true
                 },
             },
         },
