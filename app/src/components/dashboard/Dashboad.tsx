@@ -57,22 +57,18 @@ export default function Dashboard({ session }: any) {
     // if(session.user.email !== data?.coordinatorEmail){
     //     return notFound()
     // }
-    let chartData = [
-        { day: "01", registration: 186 },
-    ]
+    let chartData = [{ day: "01", registration: 186 }];
     async function getDynamicChartData() {
-        const { date,createdAt,registrations } = data??{};
+        const { date, createdAt, registrations } = data ?? {};
 
         const datesArray = generateDatesArray(createdAt ?? new Date(), date ?? new Date());
-    const dailyCounts = calculateDailyCounts(registrations ?? []);
-    const dynamicChartData = mapRegistrationData(datesArray, dailyCounts);
+        const dailyCounts = calculateDailyCounts(registrations ?? []);
+        const dynamicChartData = mapRegistrationData(datesArray, dailyCounts);
 
-    chartData =  dynamicChartData;
+        chartData = dynamicChartData;
     }
 
-    getDynamicChartData()
-
-
+    getDynamicChartData();
 
     // const chartData = [
     //     { day: "01", registration: 186 },
@@ -159,8 +155,11 @@ export default function Dashboard({ session }: any) {
                             <Link href="#" className="hover:text-foreground">
                                 Dashboard
                             </Link>
-                            <Link href="#" className="text-muted-foreground hover:text-foreground">
-                                Orders
+                            <Link
+                                href="/coordinators"
+                                className="text-muted-foreground transition-colors hover:text-foreground"
+                            >
+                                Events
                             </Link>
                             <Link href="#" className="text-muted-foreground hover:text-foreground">
                                 Products
