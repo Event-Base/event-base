@@ -1,5 +1,5 @@
 import getSession from "@/lib/getSession";
-
+import { redirect } from 'next/navigation'
 export default async function Profile() {
   const session = await getSession();
   const events = [
@@ -8,11 +8,7 @@ export default async function Profile() {
   ];
 
   if (!session) {
-    return (
-      <p className="min-h-screen text-2xl flex items-center justify-center">
-        You need to be logged in.
-      </p>
-    );
+    redirect('auth/signin?callbackUrl=/profile')
   }
   return (
     <div className="min-h-screen flex items-center">
