@@ -25,6 +25,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     session: {
         strategy: "jwt",
     },
+    pages: {
+        signIn: "/auth/signin",
+        signOut: "/auth/signout",
+    },
     cookies: {
         pkceCodeVerifier: {
             name: "next-auth.pkce.code_verifier",
@@ -51,7 +55,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     ],
     callbacks: {
         // to allow only people with sjec email id
-        
+
         // async signIn({ user , account, profile , credentials}) {
         //     const email = profile?.email as string | undefined
         //     const allowedEmailDomain = "sjec.ac.in"
@@ -60,7 +64,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         //       } else {
         //         return false;
         //       }
-            
+
         // },
         async jwt({ token }) {
             if (!token.sub) return token;
