@@ -1,8 +1,12 @@
 import EventCard from "@/components/events/EventCard";
 import prisma from "@/lib/db";
 import getSession from "@/lib/getSession";
+import { notFound } from "next/navigation";
 const page = async() => {
     const session = await getSession();
+    if(!session){
+        return notFound()
+    }
 
     const eventsOfUser = await prisma.event.findMany({
         where: {
