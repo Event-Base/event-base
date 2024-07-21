@@ -74,7 +74,45 @@ const config = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require("tailwindcss-animate"),
+    function ({ addUtilities }:any) {
+      addUtilities(
+          {
+              ".custom-scrollbar": {
+                  overflow: "auto",
+              },
+              ".custom-scrollbar::-webkit-scrollbar": {
+                  width: "8px",
+              },
+              ".custom-scrollbar::-webkit-scrollbar-track": {
+                  background: "#f1f1f1",
+              },
+              ".custom-scrollbar::-webkit-scrollbar-thumb": {
+                  background: "#888",
+                  "border-radius": "3px",
+              },
+              ".custom-scrollbar::-webkit-scrollbar-thumb:hover": {
+                  background: "#555",
+              },
+              ".custom-scrollbar::-webkit-scrollbar-thumb:active": {
+                  background: "#333",
+              },
+              ".custom-scrollbar::-webkit-scrollbar-corner": {
+                  background: "transparent",
+              },
+              // ".custom-scrollbar": {
+              //     "-ms-overflow-style": "auto" /* IE and Edge */,
+              //     "scrollbar-width": "auto" /* Firefox */,
+              // },
+              // ".custom-scrollbar::-webkit-scrollbar": {
+              //     width: "12px" /* Chrome, Safari, and Opera */,
+              // },
+          },
+          ["responsive", "hover"]
+      );
+  },
+  ],
 } satisfies Config
 
 export default config
