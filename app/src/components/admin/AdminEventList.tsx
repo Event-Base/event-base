@@ -15,8 +15,26 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import Link from "next/link";
+import prisma from "@/lib/db";
 
-export default function AdminEventList() {
+export default async function AdminEventList() {
+  const events = await prisma.event.findMany({
+    orderBy: { date: "asc" },
+    where: {
+      date: {
+        gte: new Date(),
+      },
+    },
+  });
+
+  const eventsWithRegistrations = await prisma.event.findMany({
+    include: {
+      _count: {
+        select: { registrations: true },
+      },
+    },
+  });
+
   return (
     <>
       <div className="flex flex-1 overflow-hidden">
@@ -40,138 +58,46 @@ export default function AdminEventList() {
                 <TableRow>
                   <TableHead>Event</TableHead>
                   <TableHead className="hidden md:table-cell">Date</TableHead>
+                  <TableHead className="hidden md:table-cell">Time</TableHead>
                   <TableHead className="hidden md:table-cell">
                     Location
                   </TableHead>
-                  <TableHead className="text-right">Attendees</TableHead>
+                  <TableHead className="text-right">Registrations</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                <TableRow>
-                  <TableCell className="font-medium">
-                    Annual Conference
-                  </TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    June 15, 2023
-                  </TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    San Francisco, CA
-                  </TableCell>
-                  <TableCell className="text-right">1,250</TableCell>
-                  <TableCell className="text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                          <MoveHorizontalIcon className="w-4 h-4" />
-                          <span className="sr-only">Actions</span>
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem>Edit</DropdownMenuItem>
-                        <DropdownMenuItem>Delete</DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-medium">Tech Summit</TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    August 10, 2023
-                  </TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    Seattle, WA
-                  </TableCell>
-                  <TableCell className="text-right">850</TableCell>
-                  <TableCell className="text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                          <MoveHorizontalIcon className="w-4 h-4" />
-                          <span className="sr-only">Actions</span>
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem>Edit</DropdownMenuItem>
-                        <DropdownMenuItem>Delete</DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-medium">
-                    Marketing Meetup
-                  </TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    October 5, 2023
-                  </TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    Chicago, IL
-                  </TableCell>
-                  <TableCell className="text-right">450</TableCell>
-                  <TableCell className="text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                          <MoveHorizontalIcon className="w-4 h-4" />
-                          <span className="sr-only">Actions</span>
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem>Edit</DropdownMenuItem>
-                        <DropdownMenuItem>Delete</DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-medium">Design Workshop</TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    November 20, 2023
-                  </TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    New York, NY
-                  </TableCell>
-                  <TableCell className="text-right">325</TableCell>
-                  <TableCell className="text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                          <MoveHorizontalIcon className="w-4 h-4" />
-                          <span className="sr-only">Actions</span>
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem>Edit</DropdownMenuItem>
-                        <DropdownMenuItem>Delete</DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-medium">Product Launch</TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    December 1, 2023
-                  </TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    Los Angeles, CA
-                  </TableCell>
-                  <TableCell className="text-right">550</TableCell>
-                  <TableCell className="text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                          <MoveHorizontalIcon className="w-4 h-4" />
-                          <span className="sr-only">Actions</span>
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem>Edit</DropdownMenuItem>
-                        <DropdownMenuItem>Delete</DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
+                {eventsWithRegistrations.map((event) => (
+                  <TableRow key={event.id}>
+                    <TableCell className="font-medium">{event.name}</TableCell>
+                    <TableCell className="hidden md:table-cell">
+                      {new Date(event.date).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell className="hidden md:table-cell">
+                      {new Date(event.date).toLocaleTimeString()}
+                    </TableCell>
+                    <TableCell className="hidden md:table-cell">
+                      {event.location}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {event._count.registrations}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon">
+                            <MoveHorizontalIcon className="w-4 h-4" />
+                            <span className="sr-only">Actions</span>
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem>Edit</DropdownMenuItem>
+                          <DropdownMenuItem>Delete</DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))}
               </TableBody>
             </Table>
           </div>
