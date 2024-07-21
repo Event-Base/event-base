@@ -45,21 +45,21 @@ const NavBar: React.FC = () => {
                     {session ? (
                         <Link
                             href={"/auth/signout"}
-                            className="bg-indigo-600 hover:bg-indigo-500 text-white text-lg py-2 px-4 rounded"
+                            className="bg-indigo-600  hover:bg-indigo-500 text-white text-lg py-2 px-4 rounded-lg"
                         >
                             Sign Out
                         </Link>
                     ) : (
                         <Link
                             href={"/auth/signin?callbackUrl=/profile"}
-                            className="bg-indigo-600 hover:bg-indigo-500 text-white text-lg py-2 px-4 rounded"
+                            className="bg-indigo-600 hover:bg-indigo-500 text-white text-lg py-2 px-4 rounded-lg"
                         >
                             Sign In
                         </Link>
                     )}
                     <a
                         href="/profile"
-                        className="bg-indigo-600 hover:bg-indigo-500 text-white text-lg py-2 px-4 rounded"
+                        className="bg-indigo-600 hover:bg-indigo-500 text-white text-lg py-2 px-4 rounded-lg"
                     >
                         Profile
                     </a>
