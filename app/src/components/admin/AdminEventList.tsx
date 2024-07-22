@@ -25,9 +25,6 @@ export default async function AdminEventList() {
         gte: new Date(),
       },
     },
-  });
-
-  const eventsWithRegistrations = await prisma.event.findMany({
     include: {
       _count: {
         select: { registrations: true },
@@ -67,7 +64,7 @@ export default async function AdminEventList() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {eventsWithRegistrations.map((event) => (
+                {events.map((event) => (
                   <TableRow key={event.id}>
                     <TableCell className="font-medium">{event.name}</TableCell>
                     <TableCell className="hidden md:table-cell">
