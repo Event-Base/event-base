@@ -5,12 +5,12 @@ import { usePathname } from "next/navigation";
 
 const page = () => {
     const pathName = usePathname();
-    const eventName = pathName.split("/")[3];
+    const eventID = pathName.split("/")[3];
 
     return (
         <div>
             <Suspense fallback={<div className="dark:text-white text-black">Loading</div>}>
-                <UserDetailsTable eventName={eventName} />
+                <UserDetailsTable eventName={eventID} />
             </Suspense>
         </div>
     );
