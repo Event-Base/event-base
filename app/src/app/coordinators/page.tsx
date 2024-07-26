@@ -42,7 +42,7 @@ const page = async() => {
                         </div>
                         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                             {eventsOfUser.map((event) => (
-                                <EventCard buttonTitle="View more" href = { `coordinators/dashboard/${event.name}`} event={event} key={event.id} />
+                                <EventCard buttonTitle="View more" href = { `coordinators/dashboard/${event.id}`} event={event} key={event.id} />
                             ))}
                         </div>
                     </div>
