@@ -5,14 +5,14 @@ import AdminNavBar from "@/components/admin/AdminNavBar";
 import UsersList from "@/components/admin/UsersList";
 
 export default async function Admin() {
-    const session = await getSession();
+  const session = await getSession();
 
-    return (
-        <>
-            <div className="flex min-h-screen w-full flex-col bg-background">
-                <AdminNavBar session={session} />
-                <UsersList />
-            </div>
-        </>
-    );
+  return (
+    <>
+      <div className="pt-20 flex min-h-screen w-full flex-col bg-background">
+        <AdminNavBar session={session} />
+        <UsersList />
+      </div>
+    </>
+  );
 }

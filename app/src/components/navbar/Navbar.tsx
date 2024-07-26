@@ -25,7 +25,7 @@ const NavBar: React.FC = () => {
   };
 
   return (
-    <nav className="sticky top-0  p-4 bg-white dark:bg-black">
+    <nav className="fixed w-screen  top-0  p-4 bg-white dark:bg-black">
       <div className="container mx-auto flex justify-between items-center">
         <div className="text-black dark:text-white text-2xl font-bold">
           <ThemeToggle />
@@ -37,7 +37,10 @@ const NavBar: React.FC = () => {
           <Link href="/events" className="hidden sm:block mx-5 font-semibold">
             Events
           </Link>
-          <Link href="/coordinators" className="hidden sm:block mx-5 font-semibold">
+          <Link
+            href="/coordinators"
+            className="hidden sm:block mx-5 font-semibold"
+          >
             My events
           </Link>
         </div>
@@ -105,7 +108,7 @@ const NavBar: React.FC = () => {
         </div>
       </div>
       {isOpen && (
-        <div className="md:hidden">
+        <div className="md:hidden px-5">
           <Link
             href="/"
             className="block text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white text-lg py-2"
