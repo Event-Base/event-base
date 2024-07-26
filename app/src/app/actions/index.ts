@@ -70,11 +70,11 @@ export async function getEventDetails(email: string) {
     return events;
 }
 
-export async function getIndividualEventDetails(name: string): Promise<getIndividualEventDetailsProp | null> {
-    const eventName = name.replace(/-/g, " ");
+export async function getIndividualEventDetails(id: string): Promise<getIndividualEventDetailsProp | null> {
+    // const eventName = name.replace(/-/g, " ");
     const events = await prisma.event.findUnique({
         where: {
-            name: eventName,
+            id: id,
         },
         select: {
             id: true,
@@ -118,11 +118,11 @@ export async function registerForEvent(eventId: string, userId: string) {
     }
 }
 
-export async function getUserDetailsForOneEvent(name:string ){
-    const eventName = decodeURIComponent(name);
+export async function getUserDetailsForOneEvent(id:string ){
+    // const eventName = decodeURIComponent(name);
     const users = await prisma.event.findMany({
         where:{
-            name: eventName
+            id: id
         },
         include:{
             registrations:{
