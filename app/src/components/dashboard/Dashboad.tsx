@@ -16,7 +16,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { notFound, usePathname } from "next/navigation";
+import { notFound, usePathname, useRouter } from "next/navigation";
 
 import {
     DropdownMenu,
@@ -129,8 +129,12 @@ export default function Dashboard({ session }: any) {
                     >
                         Events
                     </Link>
-                    <Link href="#" className="text-muted-foreground transition-colors hover:text-foreground">
-                        Products
+                    <Link
+                        href="/registrations"
+                        as={`${pathname}/registration`}
+                        className="text-muted-foreground transition-colors hover:text-foreground"
+                    >
+                        Registrations
                     </Link>
                     <Link href="#" className="text-muted-foreground transition-colors hover:text-foreground">
                         Customers
@@ -161,8 +165,12 @@ export default function Dashboard({ session }: any) {
                             >
                                 Events
                             </Link>
-                            <Link href="#" className="text-muted-foreground hover:text-foreground">
-                                Products
+                            <Link
+                                href="/registrations"
+                                as={`${pathname}/registration`}
+                                className="text-muted-foreground transition-colors hover:text-foreground"
+                            >
+                                Registrations
                             </Link>
                             <Link href="#" className="text-muted-foreground hover:text-foreground">
                                 Customers
