@@ -1,18 +1,19 @@
-"use client"
-import React from 'react'
-import UserDetailsTable from "@/components/datatable/table"
-import { usePathname } from 'next/navigation'
+"use client";
+import React, { Suspense } from "react";
+import UserDetailsTable from "@/components/datatable/table";
+import { usePathname } from "next/navigation";
 
 const page = () => {
-  const pathName = usePathname()
-  const eventName = pathName.split("/")[3]
+    const pathName = usePathname();
+    const eventName = pathName.split("/")[3];
 
-  return (
-    <div>
-        <UserDetailsTable eventName={eventName}/>
-      
-    </div>
-  )
-}
+    return (
+        <div>
+            <Suspense fallback={<div className="dark:text-white text-black">Loading</div>}>
+                <UserDetailsTable eventName={eventName} />
+            </Suspense>
+        </div>
+    );
+};
 
-export default page
+export default page;
