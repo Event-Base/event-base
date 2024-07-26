@@ -48,10 +48,12 @@ export default function Dashboard({ session }: any) {
     const pathname = usePathname();
 
     //take only the last name
-    const eventName = pathname.replace(/%20/g, "-").split("/").pop();
+    const eventID = pathname.split("/").pop();
+
+
     const { data, error, isLoading } = useQuery<getIndividualEventDetailsProp | null, Error>({
         queryKey: ["student"],
-        queryFn: async () => await getIndividualEventDetails(eventName as string),
+        queryFn: async () => await getIndividualEventDetails(eventID as string),
     });
 
     // if(session.user.email !== data?.coordinatorEmail){
