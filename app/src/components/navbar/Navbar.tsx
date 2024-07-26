@@ -37,8 +37,8 @@ const NavBar: React.FC = () => {
           <Link href="/events" className="hidden sm:block mx-5 font-semibold">
             Events
           </Link>
-          <Link href="#" className="hidden sm:block mx-5 font-semibold">
-            Contact
+          <Link href="/coordinators" className="hidden sm:block mx-5 font-semibold">
+            My events
           </Link>
         </div>
         <div className="hidden md:flex items-center space-x-4">

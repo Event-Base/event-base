@@ -16,7 +16,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { notFound, usePathname } from "next/navigation";
+import { notFound, usePathname, useRouter } from "next/navigation";
 
 import {
     DropdownMenu,
@@ -48,10 +48,12 @@ export default function Dashboard({ session }: any) {
     const pathname = usePathname();
 
     //take only the last name
-    const eventName = pathname.replace(/%20/g, "-").split("/").pop();
+    const eventID = pathname.split("/").pop();
+
+
     const { data, error, isLoading } = useQuery<getIndividualEventDetailsProp | null, Error>({
         queryKey: ["student"],
-        queryFn: async () => await getIndividualEventDetails(eventName as string),
+        queryFn: async () => await getIndividualEventDetails(eventID as string),
     });
 
     // if(session.user.email !== data?.coordinatorEmail){
@@ -129,8 +131,12 @@ export default function Dashboard({ session }: any) {
                     >
                         Events
                     </Link>
-                    <Link href="#" className="text-muted-foreground transition-colors hover:text-foreground">
-                        Products
+                    <Link
+                        href="/registrations"
+                        as={`${pathname}/registrations`}
+                        className="text-muted-foreground transition-colors hover:text-foreground"
+                    >
+                        Registrations
                     </Link>
                     <Link href="#" className="text-muted-foreground transition-colors hover:text-foreground">
                         Customers
@@ -161,8 +167,12 @@ export default function Dashboard({ session }: any) {
                             >
                                 Events
                             </Link>
-                            <Link href="#" className="text-muted-foreground hover:text-foreground">
-                                Products
+                            <Link
+                                href="/registrations"
+                                as={`${pathname}/registrations`}
+                                className="text-muted-foreground transition-colors hover:text-foreground"
+                            >
+                                Registrations
                             </Link>
                             <Link href="#" className="text-muted-foreground hover:text-foreground">
                                 Customers

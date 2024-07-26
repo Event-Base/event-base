@@ -1,6 +1,7 @@
 "use server";
 import prisma from "@/lib/db";
 import { getIndividualEventDetailsProp } from "@/types";
+
 import { UserRole } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
@@ -69,11 +70,11 @@ export async function getEventDetails(email: string) {
     return events;
 }
 
-export async function getIndividualEventDetails(name: string): Promise<getIndividualEventDetailsProp | null> {
-    const eventName = name.replace(/-/g, " ");
+export async function getIndividualEventDetails(id: string): Promise<getIndividualEventDetailsProp | null> {
+    // const eventName = name.replace(/-/g, " ");
     const events = await prisma.event.findUnique({
         where: {
-            name: eventName,
+            id: id,
         },
         select: {
             id: true,
@@ -115,4 +116,33 @@ export async function registerForEvent(eventId: string, userId: string) {
     } catch (error: any) {
         return { message: error.message, success: false };
     }
+}
+
+export async function getUserDetailsForOneEvent(id:string ){
+    // const eventName = decodeURIComponent(name);
+    const users = await prisma.event.findMany({
+        where:{
+            id: id
+        },
+        include:{
+            registrations:{
+                include:{
+                    user:{
+                        select:{
+                            id:true,
+                            name:true,
+                            email:true,
+                            image:true
+                        }
+                    }
+                }
+            }
+        }
+        
+    })
+    const registeredUsers = users.flatMap(event =>
+        event.registrations.map(registration => registration.user)
+      );
+      return registeredUsers;
+    
 }
