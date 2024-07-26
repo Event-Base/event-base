@@ -131,7 +131,7 @@ export default function Dashboard({ session }: any) {
                     </Link>
                     <Link
                         href="/registrations"
-                        as={`${pathname}/registration`}
+                        as={`${pathname}/registrations`}
                         className="text-muted-foreground transition-colors hover:text-foreground"
                     >
                         Registrations
@@ -167,7 +167,7 @@ export default function Dashboard({ session }: any) {
                             </Link>
                             <Link
                                 href="/registrations"
-                                as={`${pathname}/registration`}
+                                as={`${pathname}/registrations`}
                                 className="text-muted-foreground transition-colors hover:text-foreground"
                             >
                                 Registrations
