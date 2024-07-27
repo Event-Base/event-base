@@ -10,6 +10,15 @@ export default async function Component() {
       },
     },
   });
+
+  const pastEvents = await prisma.event.findMany({
+    orderBy: { date: "desc" },
+    where: {
+      date: {
+        lt: new Date(),
+      },
+    },
+  });
   return (
     <div className="pt-20 flex min-h-screen w-full flex-col bg-muted/40">
       <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
@@ -22,6 +31,19 @@ export default async function Component() {
               {events.map((event) => (
                 <EventCard
                   buttonTitle="Register"
+                  href={`/events/register/${event.id}`}
+                  event={event}
+                  key={event.id}
+                />
+              ))}
+            </div>
+            <div className="my-8">
+              <h1 className="text-2xl font-bold">Past Events</h1>
+            </div>
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {pastEvents.map((event) => (
+                <EventCard
+                  buttonTitle="Veiw more"
                   href={`/events/register/${event.id}`}
                   event={event}
                   key={event.id}
