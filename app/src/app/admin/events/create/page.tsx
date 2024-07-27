@@ -7,23 +7,19 @@ import { Button } from "@/components/ui/button";
 import { createEvent } from "@/app/actions";
 import { useFormState } from "react-dom";
 import { toast } from "@/components/ui/use-toast";
+import { InitialStateType } from "@/types";
 
 export default function Create() {
-    const initialState = {
+    const initialState: InitialStateType = {
         message: "",
-        success: true,
+        success: null,
     };
     const [formState, formAction] = useFormState(createEvent, initialState);
-
     const { message, success } = formState;
-    if (success) {
+    if (success !== null) {
         toast({
             title: message,
-        });
-    } else {
-        toast({
-            title: message,
-            variant: "destructive",
+            variant: success ? "default" : "destructive",
         });
     }
 
