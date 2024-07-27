@@ -8,3 +8,9 @@ export type getIndividualEventDetailsProp = {
     count: number;
     registrations: { id: string; createdAt: Date }[];
 };
+
+
+export type InitialStateType = {
+    message: string;
+    success: boolean | null;
+}
