@@ -16,15 +16,11 @@ import {
 } from "@/components/ui/table";
 import Link from "next/link";
 import prisma from "@/lib/db";
+import { Badge } from "@/components/ui/badge";
 
 export default async function AdminEventList() {
   const events = await prisma.event.findMany({
     orderBy: { date: "asc" },
-    where: {
-      date: {
-        gte: new Date(),
-      },
-    },
     include: {
       _count: {
         select: { registrations: true },
@@ -61,6 +57,7 @@ export default async function AdminEventList() {
                   </TableHead>
                   <TableHead className="text-right">Registrations</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
+                  <TableHead>Status</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -92,6 +89,13 @@ export default async function AdminEventList() {
                           <DropdownMenuItem>Delete</DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
+                    </TableCell>
+                    <TableCell>
+                      {new Date() < new Date(event.date) ? (
+                        <Badge variant="outline">Done</Badge>
+                      ) : (
+                        <Badge>Upcoming</Badge>
+                      )}
                     </TableCell>
                   </TableRow>
                 ))}
