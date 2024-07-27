@@ -27,7 +27,7 @@ export async function makeParticipant(id: string) {
     return await updateUserRole(id, UserRole.PARTICIPANT);
 }
 
-export async function createEvent(currentState: { message: string; success: boolean }, formData: FormData) {
+export async function createEvent(currentState: { message: string; success: boolean | null}, formData: FormData) {
     try {
         const name = formData.get("name") as string;
         const description = formData.get("description") as string;
