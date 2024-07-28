@@ -1,9 +1,12 @@
 "use server";
 import prisma from "@/lib/db";
 import { getIndividualEventDetailsProp } from "@/types";
-
+import { Resend } from "resend";
 import { UserRole } from "@prisma/client";
 import { revalidatePath } from "next/cache";
+import {VercelInviteUserEmail} from "@/emails/test"
+import getSession from "@/lib/getSession";
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 async function updateUserRole(id: string, role: UserRole) {
     try {
@@ -27,7 +30,10 @@ export async function makeParticipant(id: string) {
     return await updateUserRole(id, UserRole.PARTICIPANT);
 }
 
-export async function createEvent(currentState: { message: string; success: boolean | null}, formData: FormData) {
+export async function createEvent(
+    currentState: { message: string; success: boolean | null },
+    formData: FormData
+) {
     try {
         const name = formData.get("name") as string;
         const description = formData.get("description") as string;
@@ -51,8 +57,27 @@ export async function createEvent(currentState: { message: string; success: bool
                 coordinatorEmail: email,
             },
         });
+        const session = await getSession();
+        if(!session){
+            return { message: "Failed to create event", success: false };
+        }
+        const userName = session.user.name
+        
+
 
         await revalidatePath("/admin/events");
+
+        await resend.emails.send({
+            from: 'Acme <onboarding@resend.dev>',
+            to: "",
+            subject: 'hello world',
+            react: VercelInviteUserEmail({
+                eventName : name,
+                username: userName,
+                inviteLink : "localhost:3000/coordinator",
+
+            })
+          });
 
         return { message: "Event added successfully", success: true };
     } catch (error) {
@@ -82,11 +107,11 @@ export async function getIndividualEventDetails(id: string): Promise<getIndividu
             location: true,
             date: true,
             coordinatorEmail: true,
-            createdAt:true,
+            createdAt: true,
             registrations: {
                 select: {
                     id: true,
-                    createdAt:true
+                    createdAt: true,
                 },
             },
         },
@@ -118,31 +143,29 @@ export async function registerForEvent(eventId: string, userId: string) {
     }
 }
 
-export async function getUserDetailsForOneEvent(id:string ){
+export async function getUserDetailsForOneEvent(id: string) {
     // const eventName = decodeURIComponent(name);
     const users = await prisma.event.findMany({
-        where:{
-            id: id
+        where: {
+            id: id,
         },
-        include:{
-            registrations:{
-                include:{
-                    user:{
-                        select:{
-                            id:true,
-                            name:true,
-                            email:true,
-                            image:true
-                        }
-                    }
-                }
-            }
-        }
-        
-    })
-    const registeredUsers = users.flatMap(event =>
-        event.registrations.map(registration => registration.user)
-      );
-      return registeredUsers;
-    
+        include: {
+            registrations: {
+                include: {
+                    user: {
+                        select: {
+                            id: true,
+                            name: true,
+                            email: true,
+                            image: true,
+                        },
+                    },
+                },
+            },
+        },
+    });
+    const registeredUsers = users.flatMap((event) =>
+        event.registrations.map((registration) => registration.user)
+    );
+    return registeredUsers;
 }
