@@ -4,7 +4,7 @@ import { getIndividualEventDetailsProp } from "@/types";
 import { Resend } from "resend";
 import { UserRole } from "@prisma/client";
 import { revalidatePath } from "next/cache";
-import {VercelInviteUserEmail} from "@/emails/test"
+import { VercelInviteUserEmail } from "@/emails/test";
 import getSession from "@/lib/getSession";
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -58,26 +58,24 @@ export async function createEvent(
             },
         });
         const session = await getSession();
-        if(!session){
+        if (!session) {
             return { message: "Failed to create event", success: false };
         }
-        const userName = session.user.name
-        
-
+        //just for testing
+        const userName = session.user.name;
 
         await revalidatePath("/admin/events");
 
         await resend.emails.send({
-            from: 'Acme <onboarding@resend.dev>',
+            from: "Acme <onboarding@resend.dev>",
             to: "",
-            subject: 'hello world',
+            subject: "hello world",
             react: VercelInviteUserEmail({
-                eventName : name,
+                eventName: name,
                 username: userName,
-                inviteLink : "localhost:3000/coordinator",
-
-            })
-          });
+                inviteLink: "localhost:3000/coordinator",
+            }),
+        });
 
         return { message: "Event added successfully", success: true };
     } catch (error) {
