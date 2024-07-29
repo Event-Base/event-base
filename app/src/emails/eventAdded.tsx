@@ -17,7 +17,7 @@ import {
 } from "@react-email/components";
 import * as React from "react";
 
-interface VercelInviteUserEmailProps {
+interface EventAddedEmailProps {
     username?: string | null | undefined;
     userImage?: string;
     invitedByUsername?: string;
@@ -30,9 +30,9 @@ interface VercelInviteUserEmailProps {
     eventName?: string;
 }
 
-const baseUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "";
 
-export const VercelInviteUserEmail = ({
+
+export const EventAddedEmail = ({
     username,
     userImage,
     invitedByUsername,
@@ -42,9 +42,9 @@ export const VercelInviteUserEmail = ({
     inviteLink,
     inviteFromIp,
     inviteFromLocation,
-    eventName
-}: VercelInviteUserEmailProps) => {
-    const previewText = `Join ${invitedByUsername} on Vercel`;
+    eventName,
+}: EventAddedEmailProps) => {
+    const previewText = `Event ${eventName} is added to Event Base`;
 
     return (
         <Html>
@@ -54,7 +54,7 @@ export const VercelInviteUserEmail = ({
                 <Body className="bg-white my-auto mx-auto font-sans px-2">
                     <Container className="border border-solid border-[#eaeaea] rounded my-[40px] mx-auto p-[20px] max-w-[465px]">
                         <Section className="mt-[32px]">
-                            <Img src={``} width="40" height="37" alt="Some image" className="my-0 mx-auto" />
+                            <Img src={``} width="40" height="37" alt="logo" className="my-0 mx-auto" />
                         </Section>
                         <Heading className="text-black text-[24px] font-normal text-center p-0 my-[30px] mx-0">
                             congratulations
@@ -63,6 +63,14 @@ export const VercelInviteUserEmail = ({
                         <Text className="text-black text-[14px] leading-[24px]">
                             Your event {eventName} got added to Event Base
                         </Text>
+                        <Section className="text-center mt-[32px] mb-[32px]">
+                            <Button
+                                className="bg-[#000000] rounded text-white text-[12px] font-semibold no-underline text-center px-5 py-3"
+                                href={inviteLink}
+                            >
+                                See the event
+                            </Button>
+                        </Section>
 
                         <Text className="text-black text-[14px] leading-[24px]">
                             or copy and paste this URL into your browser to see further details:{" "}
@@ -78,4 +86,4 @@ export const VercelInviteUserEmail = ({
     );
 };
 
-export default VercelInviteUserEmail;
+export default EventAddedEmail;

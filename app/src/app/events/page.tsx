@@ -18,6 +18,7 @@ export default async function Component() {
         lt: new Date(),
       },
     },
+    take:5
   });
   return (
     <div className="pt-20 flex min-h-screen w-full flex-col bg-muted/40">

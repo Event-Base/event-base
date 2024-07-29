@@ -4,7 +4,7 @@ import { getIndividualEventDetailsProp } from "@/types";
 import { Resend } from "resend";
 import { UserRole } from "@prisma/client";
 import { revalidatePath } from "next/cache";
-import { VercelInviteUserEmail } from "@/emails/test";
+import { EventAddedEmail } from "@/emails/eventAdded";
 import getSession from "@/lib/getSession";
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -57,22 +57,24 @@ export async function createEvent(
                 coordinatorEmail: email,
             },
         });
-        const session = await getSession();
-        if (!session) {
-            return { message: "Failed to create event", success: false };
-        }
-        //just for testing
-        const userName = session.user.name;
+        const coordinatorName = await prisma.user.findUnique({
+            where:{
+                email:email
+            },
+            select:{
+                name:true
+            }
+        })
 
         await revalidatePath("/admin/events");
 
         await resend.emails.send({
             from: "Acme <onboarding@resend.dev>",
-            to: "",
-            subject: "hello world",
-            react: VercelInviteUserEmail({
+            to: "someemail@something.com",
+            subject: "Your Event Has Been Added to Our Event Base Website",
+            react: EventAddedEmail({
                 eventName: name,
-                username: userName,
+                username: coordinatorName?.name ?? "",
                 inviteLink: "localhost:3000/coordinator",
             }),
         });
