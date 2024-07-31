@@ -1,5 +1,4 @@
 import { Button } from "../ui/button";
-import { AlertDialogDemo } from "./Register";
 import getSession from "@/lib/getSession";
 import prisma from "@/lib/db";
 import { UserRole } from "@prisma/client";
@@ -10,8 +9,10 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
-export default async function RegisterPage({ event }: { event: any }) {
+export default async function TeamRegister({ event }: { event: any }) {
   const session = await getSession();
   const user = (await prisma.user.findUnique({
     where: {
@@ -28,29 +29,45 @@ export default async function RegisterPage({ event }: { event: any }) {
   };
   return (
     <div className="pt-16 flex min-h-screen w-full flex-col bg-muted/40">
-      {/* <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex" /> */}
       <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
         <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6" />
         <main className="container grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 mt-5">
           <div className="w-full">
             <Card className=" max-w-3xl mx-auto">
               <CardHeader>
-                <CardTitle>
-                  These are the information that will be used for the event
-                </CardTitle>
+                <CardTitle>Fill the form</CardTitle>
+                <p>Only leader have to register to the event</p>
               </CardHeader>
               <CardContent>
-                <p className="mb-2">Name: {user?.name}</p>
-                <p className="mb-2">Email: {user?.email}</p>
-                <p className="mb-2">Phone: {user?.phone ?? "NA"}</p>
-                <p className="mb-2">
-                  If any correction, please edit your profile
-                </p>
+                <div className="grid gap-3 p-3">
+                  <Label htmlFor="name">Team Leader Email</Label>
+                  <Input
+                    disabled
+                    id="email"
+                    type="text"
+                    name="email"
+                    defaultValue={user?.email ?? ""}
+                  />
+                </div>
+                {Array.from({ length: event.maxParticipantsPerTeam }).map(
+                  (_, i) => (
+                    <div key={i} className="grid gap-3 p-3">
+                      <Label htmlFor={`member-${i + 1}-email`}>
+                        Member {i + 1} Email
+                      </Label>
+                      <Input
+                        id={`member-${i + 1}-email`}
+                        type="text"
+                        name={`member-${i + 1}-email`}
+                      />
+                    </div>
+                  )
+                )}
               </CardContent>
             </Card>
 
             <div className="flex justify-end max-w-3xl mx-auto mt-5">
-              <AlertDialogDemo event={event} user={user} />
+              <Button variant="outline">Register</Button>
             </div>
           </div>
         </main>
