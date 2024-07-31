@@ -1,9 +1,6 @@
 "use server";
 import prisma from "@/lib/db";
-
-
-import { EventType, UserRole } from "@prisma/client";
-
+import { EventType } from "@prisma/client";
 import { getIndividualEventDetailsProp } from "@/types";
 import { Resend } from "resend";
 import { UserRole } from "@prisma/client";
@@ -74,11 +71,11 @@ export async function createEvent(
             },
         });
         const coordinatorName = await prisma.user.findUnique({
-            where:{
-                email:email
+            where: {
+                email: email
             },
-            select:{
-                name:true
+            select: {
+                name: true
             }
         })
 
