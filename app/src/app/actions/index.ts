@@ -1,8 +1,17 @@
 "use server";
 import prisma from "@/lib/db";
 
+
 import { EventType, UserRole } from "@prisma/client";
+
+import { getIndividualEventDetailsProp } from "@/types";
+import { Resend } from "resend";
+import { UserRole } from "@prisma/client";
+
 import { revalidatePath } from "next/cache";
+import { EventAddedEmail } from "@/emails/eventAdded";
+import getSession from "@/lib/getSession";
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 async function updateUserRole(id: string, role: UserRole) {
     try {
@@ -26,7 +35,10 @@ export async function makeParticipant(id: string) {
     return await updateUserRole(id, UserRole.PARTICIPANT);
 }
 
-export async function createEvent(currentState: { message: string; success: boolean }, formData: FormData) {
+export async function createEvent(
+    currentState: { message: string; success: boolean | null },
+    formData: FormData
+) {
     try {
         const name = formData.get("name") as string;
         const description = formData.get("description") as string;
@@ -61,8 +73,27 @@ export async function createEvent(currentState: { message: string; success: bool
                 isTeamEvent
             },
         });
+        const coordinatorName = await prisma.user.findUnique({
+            where:{
+                email:email
+            },
+            select:{
+                name:true
+            }
+        })
 
         await revalidatePath("/admin/events");
+
+        await resend.emails.send({
+            from: "Acme <onboarding@resend.dev>",
+            to: "someemail@something.com",
+            subject: "Your Event Has Been Added to Our Event Base Website",
+            react: EventAddedEmail({
+                eventName: name,
+                username: coordinatorName?.name ?? "",
+                inviteLink: "localhost:3000/coordinator",
+            }),
+        });
 
         return { message: "Event added successfully", success: true };
     } catch (error) {
@@ -143,6 +174,7 @@ export async function getUserDetailsForOneEvent(id: string) {
                             id: true,
                             name: true,
                             email: true,
+
                             image: true
                         }
                     }
@@ -157,3 +189,4 @@ export async function getUserDetailsForOneEvent(id: string) {
     return registeredUsers;
 
 }
+

@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { createEvent } from "@/app/actions";
 import { useFormState } from "react-dom";
 import { toast } from "@/components/ui/use-toast";
+
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useState } from "react";
 
@@ -35,6 +36,7 @@ export default function Create() {
       variant: "destructive",
     });
   }
+
 
   const [selectedEventType, setSelectedEventType] = useState("INDIVIDUAL");
   const handleEventTypeChange = (

@@ -18,6 +18,7 @@ export default async function Component() {
         lt: new Date(),
       },
     },
+    take:5
   });
   return (
     <div className="pt-20 flex min-h-screen w-full flex-col bg-muted/40">
@@ -30,8 +31,8 @@ export default async function Component() {
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {events.map((event) => (
                 <EventCard
-                  buttonTitle="Register"
-                  href={`/events/register/${event.id}`}
+                  buttonTitle="View More"
+                  href={`/events/${event.id}`}
                   event={event}
                   key={event.id}
                 />
@@ -43,8 +44,8 @@ export default async function Component() {
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {pastEvents.map((event) => (
                 <EventCard
-                  buttonTitle="Veiw more"
-                  href={`/events/register/${event.id}`}
+                  buttonTitle="Veiw More"
+                  href={`/events/${event.id}`}
                   event={event}
                   key={event.id}
                 />

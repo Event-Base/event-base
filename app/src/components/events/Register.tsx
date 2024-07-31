@@ -14,40 +14,40 @@ import {
 import { Button } from "@/components/ui/button";
 import { useFormState } from "react-dom";
 import { toast } from "@/components/ui/use-toast";
+import { InitialStateType } from "@/types";
 
+type FormState = {
+  message: string;
+  success: boolean | null;
+};
 export function AlertDialogDemo({ event, user }: { event: any; user: any }) {
-  const initialState = {
+  const initialState: InitialStateType = {
     message: "",
-    success: true,
+    success: null,
   };
-  const [formState, formAction] = useFormState(
+  const [formState, formAction] = useFormState<FormState>(
     () => registerForEvent(event.id, user.id),
     initialState
   );
 
   const { message, success } = formState;
-  if (success) {
+  if (success !== null) {
     toast({
       title: message,
-    });
-  } else {
-    toast({
-      title: message,
-      variant: "destructive",
+      variant: success ? "default" : "destructive",
     });
   }
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="outline">Register</Button>
+        <Button variant="outline">Submit</Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <form action={formAction}>
           <AlertDialogHeader>
             <AlertDialogTitle>Register</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure to register as {user.name}
-              {event.name}?{" "}
+              Are you sure to register as {user.name} for {event.name}?{" "}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
