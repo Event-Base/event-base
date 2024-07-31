@@ -1,8 +1,7 @@
 "use server";
 import prisma from "@/lib/db";
-import { getIndividualEventDetailsProp } from "@/types";
 
-import { UserRole } from "@prisma/client";
+import { EventType, UserRole } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
 async function updateUserRole(id: string, role: UserRole) {
@@ -35,10 +34,16 @@ export async function createEvent(currentState: { message: string; success: bool
         const time = formData.get("time") as string;
         const email = formData.get("email") as string;
         const dateTime = `${date}T${time}:00`;
-        const formattedDate = new Date(dateTime).toISOString().slice(0, 19).replace("T", " ");
+        const formattedEventDate = new Date(dateTime).toISOString().slice(0, 19).replace("T", " ");
         const location = formData.get("location") as string;
+        const eventType = formData.get("eventType") as EventType;
+        const DeadlineDate = formData.get("registrationDeadline") as string || date;
+        const DeadlineDateTime = `${DeadlineDate}T23:59:00`;
+        const minParticipantsPerTeam = Number(formData.get("minParticipantsPerTeam"));
+        const maxParticipantsPerTeam = Number(formData.get("maxParticipantsPerTeam"));
+        const isTeamEvent = eventType == 'TEAM' ? true : false;
 
-        if (!name || !description || !formattedDate) {
+        if (!name || !description || !formattedEventDate) {
             throw new Error("Missing required fields");
         }
 
@@ -47,8 +52,13 @@ export async function createEvent(currentState: { message: string; success: bool
                 name,
                 description,
                 location,
-                date: new Date(formattedDate),
+                date: new Date(formattedEventDate),
                 coordinatorEmail: email,
+                eventType,
+                registrationDeadline: new Date(DeadlineDateTime),
+                minParticipantsPerTeam,
+                maxParticipantsPerTeam,
+                isTeamEvent
             },
         });
 
@@ -56,6 +66,7 @@ export async function createEvent(currentState: { message: string; success: bool
 
         return { message: "Event added successfully", success: true };
     } catch (error) {
+        console.error(error)
         return { message: "Failed to create event", success: false };
     }
 }
@@ -82,11 +93,11 @@ export async function getIndividualEventDetails(id: string): Promise<getIndividu
             location: true,
             date: true,
             coordinatorEmail: true,
-            createdAt:true,
+            createdAt: true,
             registrations: {
                 select: {
                     id: true,
-                    createdAt:true
+                    createdAt: true
                 },
             },
         },
@@ -118,31 +129,31 @@ export async function registerForEvent(eventId: string, userId: string) {
     }
 }
 
-export async function getUserDetailsForOneEvent(id:string ){
+export async function getUserDetailsForOneEvent(id: string) {
     // const eventName = decodeURIComponent(name);
     const users = await prisma.event.findMany({
-        where:{
+        where: {
             id: id
         },
-        include:{
-            registrations:{
-                include:{
-                    user:{
-                        select:{
-                            id:true,
-                            name:true,
-                            email:true,
-                            image:true
+        include: {
+            registrations: {
+                include: {
+                    user: {
+                        select: {
+                            id: true,
+                            name: true,
+                            email: true,
+                            image: true
                         }
                     }
                 }
             }
         }
-        
+
     })
     const registeredUsers = users.flatMap(event =>
         event.registrations.map(registration => registration.user)
-      );
-      return registeredUsers;
-    
+    );
+    return registeredUsers;
+
 }

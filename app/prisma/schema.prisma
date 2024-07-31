@@ -64,19 +64,29 @@ model Team {
 }
 
 model Event {
-  id               String         @id @default(cuid())
-  name             String         @unique
-  description      String
-  date             DateTime
-  location         String
-  coordinatorEmail String?        @map("coordinator_email")
-  createdAt        DateTime       @default(now())
-  isTeamEvent      Boolean        @default(false) @map("is_team_event")
-  coordinator      User?          @relation(fields: [coordinatorEmail], references: [email])
-  registrations    Registration[]
-  teams            Team[]
+  id                    String         @id @default(cuid())
+  name                  String         @unique
+  description           String
+  date                  DateTime
+  location              String
+  eventType             EventType      
+  maxParticipants       Int?
+  registrationDeadline  DateTime?
+  minParticipantsPerTeam Int?
+  maxParticipantsPerTeam Int?
+  coordinatorEmail      String?        @map("coordinator_email")
+  createdAt             DateTime       @default(now())
+  isTeamEvent           Boolean        @default(false) @map("is_team_event")
+  coordinator           User?          @relation(fields: [coordinatorEmail], references: [email])
+  registrations         Registration[]
+  teams                 Team[]
 
   @@map("events")
+}
+
+enum EventType{
+  INDIVIDUAL
+  TEAM
 }
 
 model Registration {
