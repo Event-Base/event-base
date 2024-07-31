@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
 
 export default function EventCard({
   event,
@@ -25,6 +26,10 @@ export default function EventCard({
       <CardContent>
         <div className="grid gap-2">
           <div className="flex items-center gap-2">
+            <Badge variant="outline">{event.eventType}</Badge>
+          </div>
+
+          <div className="flex items-center gap-2">
             <CalendarIcon className="h-4 w-4" />
             <span>{event.date.toDateString()}</span>
           </div>
@@ -35,6 +40,14 @@ export default function EventCard({
           <div className="flex items-center gap-2">
             <MapPinIcon className="h-4 w-4" />
             <span>{event.location}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span>Deadline:</span>
+            <span>
+              {event.registrationDeadline instanceof Date
+                ? event.registrationDeadline.toDateString()
+                : "No deadline"}
+            </span>
           </div>
         </div>
       </CardContent>
