@@ -20,7 +20,7 @@ type FormState = {
   message: string;
   success: boolean | null;
 };
-export function AlertDialogDemo({ event, user }: { event: any; user: any }) {
+export function RegisterButton({ event, user }: { event: any; user: any }) {
   const initialState: InitialStateType = {
     message: "",
     success: null,
