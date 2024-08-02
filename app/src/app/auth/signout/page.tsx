@@ -33,7 +33,6 @@ export default function Signin() {
             {loading ? (
                 <div className="flex flex-col items-center">
                     <l-quantum size={"88"} speed={"1.75"} color={"#007BFF"}></l-quantum>
-                    {/* Add a loading spinner or animation here if desired */}
                 </div>
             ) : (
                 <p>Redirecting...</p>
