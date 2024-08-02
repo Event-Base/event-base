@@ -21,7 +21,9 @@ export default function RootLayout({
         <html lang="en" className="custom-scrollbar">
             <body className={inter.className}>
                 <Providers>
-                    <NavBar />
+                    <nav className="">
+                        <NavBar />
+                    </nav>
                     {children}
                     <Toaster />
                 </Providers>
