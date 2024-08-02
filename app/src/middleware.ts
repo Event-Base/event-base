@@ -4,8 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function middleware(req: NextRequest) {
     const secret = process.env.AUTH_SECRET ?? "";
-    const salt = process.env.AUTH_SALT ?? undefined
-    const token = await getToken({ req, secret ,salt });
+    const token = await getToken({ req, secret, salt:process.env.NODE_ENV === "production" ? "__Secure-authjs.session-token" : "authjs.session-token"  });
     
 
     const { pathname } = req.nextUrl;
