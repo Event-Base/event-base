@@ -40,7 +40,13 @@ export default async function TeamRegister({ event }: { event: any }) {
               </CardHeader>
               <CardContent>
                 <div className="grid gap-3 p-3">
-                  <Label htmlFor="name">Team Leader Email</Label>
+                  <Label htmlFor="team-name">Team Name</Label>
+                  <Input type="text" name="team-name" />
+                </div>
+                <div className="grid gap-3 p-3">
+                  <Label htmlFor="name">
+                    Team Leader Email (Team Memeber 1)
+                  </Label>
                   <Input
                     disabled
                     id="email"
@@ -49,11 +55,11 @@ export default async function TeamRegister({ event }: { event: any }) {
                     defaultValue={user?.email ?? ""}
                   />
                 </div>
-                {Array.from({ length: event.maxParticipantsPerTeam }).map(
+                {Array.from({ length: event.maxParticipantsPerTeam - 1 }).map(
                   (_, i) => (
                     <div key={i} className="grid gap-3 p-3">
                       <Label htmlFor={`member-${i + 1}-email`}>
-                        Member {i + 1} Email
+                        Member {i + 2} Email
                       </Label>
                       <Input
                         id={`member-${i + 1}-email`}
