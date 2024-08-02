@@ -48,6 +48,7 @@ model User {
   registrations Registration[]
   sessions      Session[]
   leader        Team?
+  teamMemberships TeamMember[]  // Relationship with TeamMember
 
   @@map("users")
 }
@@ -59,9 +60,22 @@ model Team {
   leaderId String @unique
   event    Event  @relation(fields: [eventId], references: [id])
   leader   User   @relation(fields: [leaderId], references: [id])
+  members  TeamMember[]  
 
   @@map("teams")
 }
+
+model TeamMember {
+  id       String   @id @default(cuid())
+  teamId   String
+  userId   String
+  team     Team     @relation(fields: [teamId], references: [id])
+  user     User     @relation(fields: [userId], references: [id])
+
+  @@unique([teamId, userId])
+  @@map("team_members")
+}
+
 
 model Event {
   id                    String         @id @default(cuid())
