@@ -1,4 +1,4 @@
-import { CardDemo } from "@/components/ui/card-for-profile";
+import { CardForProfile } from "@/components/ui/card-for-profile";
 import prisma from "@/lib/db";
 import getSession from "@/lib/getSession";
 import { redirect } from "next/navigation";
@@ -61,7 +61,7 @@ export default async function Profile() {
                     <h2 className="text-xl font-semibold mb-4">Participated Events</h2>
                     <div className="flex flex-col items-center md:flex-row  gap-8">
                         {events.map((event) => (
-                            <CardDemo
+                            <CardForProfile
                                 key={event.id}
                                 eventName={event.name}
                                 eventDate={event.date.toISOString().split('T')[0]}
