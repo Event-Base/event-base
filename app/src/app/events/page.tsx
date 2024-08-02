@@ -44,10 +44,11 @@ export default async function Component() {
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {pastEvents.map((event) => (
                 <EventCard
-                  buttonTitle="Veiw More"
-                  href={`/events/${event.id}`}
+                  buttonTitle="Registration closed"
+                  href={``}
                   event={event}
                   key={event.id}
+                  disabled={true}
                 />
               ))}
             </div>
