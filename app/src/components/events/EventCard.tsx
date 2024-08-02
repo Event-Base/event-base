@@ -13,10 +13,12 @@ export default function EventCard({
   event,
   buttonTitle,
   href,
+  disabled = false,
 }: {
   event: any;
   buttonTitle: string;
   href?: string;
+  disabled?: boolean;
 }) {
   return (
     <Card key={event.id}>
@@ -53,7 +55,7 @@ export default function EventCard({
       </CardContent>
       <CardFooter>
         <Link href={href ?? ""}>
-          <Button>{buttonTitle}</Button>
+          <Button disabled = {disabled}>{buttonTitle}</Button>
         </Link>
       </CardFooter>
     </Card>
