@@ -16,10 +16,8 @@ export default async function Profile() {
                 userId: userId,
             },
             include: {
-                event: true
-              
+                event: true,
             },
-            
         });
 
         return registrations.map((registration) => registration.event);
@@ -59,13 +57,14 @@ export default async function Profile() {
                 </div>
                 <div className="mt-6">
                     <h2 className="text-xl font-semibold mb-4">Participated Events</h2>
-                    <div className="flex flex-col items-center md:flex-row  gap-8">
+                    <div className="flex flex-wrap justify-center gap-8">
                         {events.map((event) => (
                             <CardForProfile
                                 key={event.id}
                                 eventName={event.name}
-                                eventDate={event.date.toISOString().split('T')[0]}
+                                eventDate={event.date.toISOString().split("T")[0]}
                                 eventDesc={event.description}
+                            
                             />
                         ))}
                     </div>
