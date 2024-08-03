@@ -37,86 +37,80 @@ model Session {
 }
 
 model User {
-  id            String         @id @default(cuid())
-  name          String?
-  email         String?        @unique
-  role          UserRole       @default(PARTICIPANT)
-  emailVerified DateTime?      @map("email_verified")
-  image         String?
-  accounts      Account[]
-  events        Event[]
-  registrations Registration[]
-  sessions      Session[]
-  leader        Team?
-  teamMemberships TeamMember[]  // Relationship with TeamMember
+  id              String         @id @default(cuid())
+  name            String?
+  email           String?        @unique
+  role            UserRole       @default(PARTICIPANT)
+  emailVerified   DateTime?      @map("email_verified")
+  image           String?
+  accounts        Account[]
+  events          Event[]
+  registrations   Registration[]
+  sessions        Session[]
+  teamMemberships TeamMember[]
+  leader          Team?
+  Issues          Issues[]
 
   @@map("users")
 }
 
 model Team {
-  id       String      @id @default(cuid())
-  name     String
-  eventId  String      @map("event_id")
-  leaderId String      @unique
-  event    Event       @relation(fields: [eventId], references: [id])
-  leader   User        @relation(fields: [leaderId], references: [id])
-  members  TeamMember[]
-  registrations Registration[] 
+  id            String         @id @default(cuid())
+  name          String
+  eventId       String         @map("event_id")
+  leaderId      String         @unique
+  registrations Registration[]
+  members       TeamMember[]
+  event         Event          @relation(fields: [eventId], references: [id])
+  leader        User           @relation(fields: [leaderId], references: [id])
 
   @@map("teams")
 }
 
 model TeamMember {
-  id       String   @id @default(cuid())
-  teamId   String
-  userId   String
-  team     Team     @relation(fields: [teamId], references: [id])
-  user     User     @relation(fields: [userId], references: [id])
+  id     String @id @default(cuid())
+  teamId String
+  userId String
+  team   Team   @relation(fields: [teamId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
 
   @@unique([teamId, userId])
   @@map("team_members")
 }
 
-
 model Event {
-  id                    String         @id @default(cuid())
-  name                  String         @unique
-  description           String
-  date                  DateTime
-  location              String
-  eventType             EventType      
-  maxParticipants       Int?
-  registrationDeadline  DateTime?
+  id                     String         @id @default(cuid())
+  name                   String         @unique
+  description            String
+  date                   DateTime
+  location               String
+  eventType              EventType
+  maxParticipants        Int?
+  registrationDeadline   DateTime?
   minParticipantsPerTeam Int?
   maxParticipantsPerTeam Int?
-  coordinatorEmail      String?        @map("coordinator_email")
-  createdAt             DateTime       @default(now())
-  isTeamEvent           Boolean        @default(false) @map("is_team_event")
-  coordinator           User?          @relation(fields: [coordinatorEmail], references: [email])
-  registrations         Registration[]
-  teams                 Team[]
+  coordinatorEmail       String?        @map("coordinator_email")
+  createdAt              DateTime       @default(now())
+  isTeamEvent            Boolean        @default(false) @map("is_team_event")
+  coordinator            User?          @relation(fields: [coordinatorEmail], references: [email])
+  registrations          Registration[]
+  teams                  Team[]
 
   @@map("events")
-}
-
-enum EventType{
-  INDIVIDUAL
-  TEAM
 }
 
 model Registration {
   id        String   @id @default(cuid())
   userId    String
   eventId   String
-  teamId    String? 
   attended  Boolean  @default(false)
   createdAt DateTime @default(now())
-  
-  user      User     @relation(fields: [userId], references: [id])
+  teamId    String?
   event     Event    @relation(fields: [eventId], references: [id])
-  team      Team?    @relation(fields: [teamId], references: [id]) 
-  
-  @@unique([userId, eventId]) 
+  team      Team?    @relation(fields: [teamId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, eventId])
   @@map("registrations")
 }
 
@@ -127,6 +121,23 @@ model VerificationToken {
 
   @@unique([identifier, token])
   @@map("verificationtokens")
+}
+
+model Issues {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  createdAt   DateTime @default(now())
+  userId      String
+  user        User?    @relation(fields: [userId], references: [id])
+  
+
+  @@map("issues")
+}
+
+enum EventType {
+  INDIVIDUAL
+  TEAM
 }
 
 enum UserRole {

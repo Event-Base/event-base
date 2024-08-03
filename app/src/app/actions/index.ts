@@ -46,11 +46,11 @@ export async function createEvent(
         const formattedEventDate = new Date(dateTime).toISOString().slice(0, 19).replace("T", " ");
         const location = formData.get("location") as string;
         const eventType = formData.get("eventType") as EventType;
-        const DeadlineDate = formData.get("registrationDeadline") as string || date;
+        const DeadlineDate = (formData.get("registrationDeadline") as string) || date;
         const DeadlineDateTime = `${DeadlineDate}T23:59:00`;
         const minParticipantsPerTeam = Number(formData.get("minParticipantsPerTeam"));
         const maxParticipantsPerTeam = Number(formData.get("maxParticipantsPerTeam"));
-        const isTeamEvent = eventType == 'TEAM' ? true : false;
+        const isTeamEvent = eventType == "TEAM" ? true : false;
 
         if (!name || !description || !formattedEventDate) {
             throw new Error("Missing required fields");
@@ -67,17 +67,17 @@ export async function createEvent(
                 registrationDeadline: new Date(DeadlineDateTime),
                 minParticipantsPerTeam,
                 maxParticipantsPerTeam,
-                isTeamEvent
+                isTeamEvent,
             },
         });
         const coordinatorName = await prisma.user.findUnique({
             where: {
-                email: email
+                email: email,
             },
             select: {
-                name: true
-            }
-        })
+                name: true,
+            },
+        });
 
         await revalidatePath("/admin/events");
 
@@ -94,7 +94,7 @@ export async function createEvent(
 
         return { message: "Event added successfully", success: true };
     } catch (error) {
-        console.error(error)
+        console.error(error);
         return { message: "Failed to create event", success: false };
     }
 }
@@ -125,7 +125,7 @@ export async function getIndividualEventDetails(id: string): Promise<getIndividu
             registrations: {
                 select: {
                     id: true,
-                    createdAt: true
+                    createdAt: true,
                 },
             },
         },
@@ -161,7 +161,7 @@ export async function getUserDetailsForOneEvent(id: string) {
     // const eventName = decodeURIComponent(name);
     const users = await prisma.event.findMany({
         where: {
-            id: id
+            id: id,
         },
         include: {
             registrations: {
@@ -172,19 +172,17 @@ export async function getUserDetailsForOneEvent(id: string) {
                             name: true,
                             email: true,
 
-                            image: true
-                        }
-                    }
-                }
-            }
-        }
-
-    })
-    const registeredUsers = users.flatMap(event =>
-        event.registrations.map(registration => registration.user)
+                            image: true,
+                        },
+                    },
+                },
+            },
+        },
+    });
+    const registeredUsers = users.flatMap((event) =>
+        event.registrations.map((registration) => registration.user)
     );
     return registeredUsers;
-
 }
 
 export async function teamRegister(
@@ -205,31 +203,25 @@ export async function teamRegister(
             if (!leaderEmail) {
                 throw new Error("Leader email is required");
             }
-
-
-
         }
         const event = await prisma.event.findUnique({
             where: {
                 id: eventId,
-            }
+            },
         });
 
         const leader = await prisma.user.findUnique({
             where: {
                 email: leaderEmail,
-            }
-        })
+            },
+        });
         if (!leader) {
             throw new Error("Leader not found");
         }
 
-
         // const maxParticipantsPerTeam = event?.maxParticipantsPerTeam ?? 0;
         const memberEmails: string[] = Array.from({
-            length: event?.maxParticipantsPerTeam
-                ? event.maxParticipantsPerTeam - 1
-                : 0,
+            length: event?.maxParticipantsPerTeam ? event.maxParticipantsPerTeam - 1 : 0,
         }).map((_, i) => formData.get(`member-${i + 1}-email`) as string);
 
         const team = await prisma.team.create({
@@ -239,10 +231,6 @@ export async function teamRegister(
                 eventId,
             },
         });
-
-
-
-
 
         for (const email of memberEmails) {
             const member = await prisma.user.findUnique({
@@ -265,11 +253,47 @@ export async function teamRegister(
                 eventId,
                 attended: false,
             },
-        })
+        });
         return { message: "Team registered successfully", success: true };
     } catch (error) {
         console.error((error as any).message);
         return { message: "Failed to register for the team", success: false };
     }
+}
 
+export async function createIsuue({
+    email,
+    issueName,
+    description,
+}: {
+    email: string;
+    issueName: string;
+    description: string;
+}) {
+    try{
+        
+        const user = await prisma.user.findUnique({
+            where: {
+                email
+            }
+        })
+        
+        if(!user){
+            throw new Error("user not found")
+        }
+
+        const issue = await prisma.issues.create({
+            data: {
+                title:issueName,
+                description:description,
+                userId:user.id
+            }
+
+        })
+        return {message: "Issue reported successfully"}
+    }
+    catch(error){
+        console.error(error)
+        return {message: "Failed to create issue"}
+    }
 }
