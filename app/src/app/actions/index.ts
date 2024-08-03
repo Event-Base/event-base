@@ -261,6 +261,7 @@ export async function teamRegister(
         const register = await prisma.registration.create({
             data: {
                 userId: leader.id,
+                teamId: team.id,
                 eventId,
                 attended: false,
             },
