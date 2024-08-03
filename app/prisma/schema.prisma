@@ -48,8 +48,8 @@ model User {
   registrations   Registration[]
   sessions        Session[]
   teamMemberships TeamMember[]
-  leader          Team?
-  Issues          Issues[]
+  teams           Team[]         @relation("UserTeams") // Fixed relation name
+  issues          Issues[]
 
   @@map("users")
 }
@@ -58,11 +58,11 @@ model Team {
   id            String         @id @default(cuid())
   name          String
   eventId       String         @map("event_id")
-  leaderId      String         @unique
+  leaderId      String
   registrations Registration[]
   members       TeamMember[]
   event         Event          @relation(fields: [eventId], references: [id])
-  leader        User           @relation(fields: [leaderId], references: [id])
+  leader        User           @relation(fields: [leaderId], references: [id], name: "UserTeams") // Fixed relation name
 
   @@map("teams")
 }
@@ -130,7 +130,6 @@ model Issues {
   createdAt   DateTime @default(now())
   userId      String
   user        User?    @relation(fields: [userId], references: [id])
-  
 
   @@map("issues")
 }
