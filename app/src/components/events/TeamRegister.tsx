@@ -4,6 +4,9 @@ import { User, UserRole } from "@prisma/client";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { useFormState } from "react-dom";
+import { toast } from "@/components/ui/use-toast";
+import { teamRegister } from "@/app/actions";
 
 interface UserProps {
   id: string;
@@ -39,39 +42,26 @@ interface TeamRegisterProps {
   user: UserProps | null;
 }
 
-import { useState } from "react";
-
 export default function TeamRegister({ event, user }: TeamRegisterProps) {
-  const [teamName, setTeamName] = useState("");
-  const [teamLeaderEmail, setTeamLeaderEmail] = useState(user?.email ?? "");
-  const [teamMemberEmails, setTeamMemberEmails] = useState<string[]>([]);
-
-  const handleTeamNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setTeamName(event.target.value);
+  const initialState = {
+    message: "",
+    success: true,
   };
 
-  const handleTeamLeaderEmailChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setTeamLeaderEmail(event.target.value);
-  };
+  const [formState, formAction] = useFormState(teamRegister, initialState);
 
-  const handleTeamMemberEmailChange = (
-    index: number,
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const updatedEmails = [...teamMemberEmails];
-    updatedEmails[index] = event.target.value;
-    setTeamMemberEmails(updatedEmails);
-  };
+  const { message, success } = formState;
 
-  const handleRegister = () => {
-    console.log("Registering team", {
-      teamName,
-      teamLeaderEmail,
-      teamMemberEmails,
+  if (success) {
+    toast({
+      title: message,
     });
-  };
+  } else {
+    toast({
+      title: message,
+      variant: "destructive",
+    });
+  }
 
   return (
     <div className="pt-16 flex min-h-screen w-full flex-col bg-muted/40">
@@ -85,55 +75,61 @@ export default function TeamRegister({ event, user }: TeamRegisterProps) {
                 <p>Only the leader has to register for the event</p>
               </CardHeader>
               <CardContent>
-                <div className="grid gap-3 p-3">
-                  <Label htmlFor="team-name">Team Name</Label>
-                  <Input
-                    type="text"
-                    name="team-name"
-                    value={teamName}
-                    onChange={handleTeamNameChange}
-                  />
-                </div>
-                <div className="grid gap-3 p-3">
-                  <Label htmlFor="email">
-                    Team Leader Email (Team Member 1)
-                  </Label>
-                  <Input
-                    disabled
-                    id="email"
-                    type="text"
-                    name="email"
-                    value={teamLeaderEmail}
-                    onChange={handleTeamLeaderEmailChange}
-                  />
-                </div>
-                {Array.from({
-                  length: event.maxParticipantsPerTeam
-                    ? event.maxParticipantsPerTeam - 1
-                    : 0,
-                }).map((_, i) => (
-                  <div key={i} className="grid gap-3 p-3">
-                    <Label htmlFor={`member-${i + 1}-email`}>
-                      Member {i + 2} Email
+                <form action={formAction}>
+                  <div className="gap-3 p-3 hidden">
+                    <Label htmlFor="event-id">EventId</Label>
+                    <Input
+                      id="event-id"
+                      type="text"
+                      name="event-id"
+                      value={event.id}
+                      disabled
+                    />
+                    <input type="hidden" name="event-id" value={event.id} />
+                  </div>
+                  <div className="grid gap-3 p-3">
+                    <Label htmlFor="team-name">Team Name</Label>
+                    <Input id="team-name" type="text" name="team-name" />
+                  </div>
+                  <div className="grid gap-3 p-3">
+                    <Label htmlFor="leader-email">
+                      Team Leader Email (Team Member 1)
                     </Label>
                     <Input
-                      id={`member-${i + 1}-email`}
+                      disabled
+                      id="leader-email"
                       type="text"
-                      name={`member-${i + 1}-email`}
-                      value={teamMemberEmails[i] || ""}
-                      onChange={(event) =>
-                        handleTeamMemberEmailChange(i, event)
-                      }
+                      name="leader-email"
+                      value={user?.email || ""}
+                    />
+                    <input
+                      type="hidden"
+                      name="leader-email"
+                      value={user?.email || ""}
                     />
                   </div>
-                ))}
+                  {Array.from({
+                    length: event.maxParticipantsPerTeam
+                      ? event.maxParticipantsPerTeam - 1
+                      : 0,
+                  }).map((_, i) => (
+                    <div key={i} className="grid gap-3 p-3">
+                      <Label htmlFor={`member-${i + 1}-email`}>
+                        Member {i + 2} Email
+                      </Label>
+                      <Input
+                        id={`member-${i + 1}-email`}
+                        type="text"
+                        name={`member-${i + 1}-email`}
+                      />
+                    </div>
+                  ))}
+                  <div className="flex justify-end max-w-3xl mx-auto mt-5">
+                    <Button variant="outline">Register</Button>
+                  </div>
+                </form>
               </CardContent>
             </Card>
-            <div className="flex justify-end max-w-3xl mx-auto mt-5">
-              <Button variant="outline" onClick={handleRegister}>
-                Register
-              </Button>
-            </div>
           </div>
         </main>
       </div>
