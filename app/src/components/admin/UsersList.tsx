@@ -1,21 +1,21 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import axios from "axios";
-import { GetServerSideProps } from "next";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Button } from "../ui/button";
-import { ChevronDownIcon } from "lucide-react";
+import { ChevronDownIcon, SearchIcon } from "lucide-react";
 import ChangeRole from "./ChangeRole";
-import prisma from "@/lib/db";
 import { UserRole } from "@prisma/client";
+import { Input } from "../ui/input";
+import debounce from "lodash.debounce";
 
 export interface User {
     id: string;
     name: string | null;
     email: string | null;
-    role: UserRole; // Assuming you have a UserRole type defined
+    role: UserRole;
     image: string | null;
 }
 
@@ -24,34 +24,59 @@ interface UsersListProps {
     initialPage: number;
 }
 
-
-
 export const dynamic = "force-dynamic";
 
-const UsersList: React.FC<UsersListProps> = ({initialUsers ,initialPage }) => {
-    const [userList, setUserList] = useState<User[] >(initialUsers);
+const UsersList: React.FC<UsersListProps> = ({ initialUsers, initialPage }) => {
+    const [userList, setUserList] = useState<User[]>(initialUsers);
     const [currentPage, setCurrentPage] = useState(initialPage);
     const [loading, setLoading] = useState(false);
     const [hasMore, setHasMore] = useState(true);
+    const [searchQuery, setSearchQuery] = useState(""); // Search query state
     const loader = useRef<HTMLDivElement | null>(null);
 
-    const loadMoreUsers = async () => {
+    const fetchUsers = async (page: number, query: string) => {
         if (loading) return;
         setLoading(true);
         try {
-            const response = await axios.get(`/api/users?page=${currentPage + 1}`);
+            const response = await axios.get(`/api/users?page=${page}&search=${encodeURIComponent(query)}`);
             if (response.data.users.length > 0) {
                 setUserList((prevUsers) => [...prevUsers, ...response.data.users]);
-                setCurrentPage((prevPage) => prevPage + 1);
+                setCurrentPage(page);
             } else {
                 setHasMore(false);
             }
         } catch (error) {
-            console.error("Error loading more users:", error);
+            console.error("Error fetching users:", error);
         }
         setLoading(false);
     };
+    const loadMoreUsers = useCallback(() => {
+        if (hasMore) {
+            fetchUsers(currentPage + 1, searchQuery);
+        }
+    }, [currentPage, hasMore, searchQuery]);
 
+    const debouncedFetchUsers = useCallback(
+        debounce(async (query: string) => {
+            setCurrentPage(1); // Reset page number
+            setHasMore(true); // Reset hasMore
+            try {
+                const response = await axios.get(`/api/users?page=1&search=${encodeURIComponent(query)}`);
+                setUserList(response.data.users);
+            } catch (error) {
+                console.error("Error fetching users:", error);
+            }
+        }, 500),
+        []
+    );
+
+    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const query = e.target.value;
+        setSearchQuery(query);
+        debouncedFetchUsers(query); // Use debounced fetch function
+    };
+
+    // Observe scroll and load more users when scrolled to the bottom
     useEffect(() => {
         if (loader.current) {
             const observer = new IntersectionObserver(
@@ -65,13 +90,25 @@ const UsersList: React.FC<UsersListProps> = ({initialUsers ,initialPage }) => {
             observer.observe(loader.current);
             return () => observer.disconnect();
         }
-    }, [loader.current, hasMore]);
+    }, [loader.current, hasMore, loadMoreUsers]);
 
     return (
         <>
             <div className="flex flex-1 overflow-hidden">
                 <main className="container grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 mt-5">
                     <Card className="w-full">
+                        <div className="flex justify-end gap-2 mt-5 p-5">
+                            <div className="relative">
+                                <SearchIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                                <Input
+                                    type="search"
+                                    placeholder="Search users..."
+                                    className="pl-8 sm:w-[200px] md:w-[300px]"
+                                    value={searchQuery}
+                                    onChange={handleSearchChange} // Handle search input change
+                                />
+                            </div>
+                        </div>
                         <CardHeader>
                             <CardTitle>Users</CardTitle>
                             <CardDescription>Manage user roles and permissions.</CardDescription>
@@ -127,19 +164,3 @@ const UsersList: React.FC<UsersListProps> = ({initialUsers ,initialPage }) => {
 };
 
 export default UsersList;
-
-export const getServerSideProps: GetServerSideProps = async () => {
-    const page = 1;
-    const limit = 10;
-    const users = await prisma.user.findMany({
-        skip: (page - 1) * limit,
-        take: limit,
-    });
-
-    return {
-        props: {
-            initialUsers: users,
-            initialPage: page,
-        },
-    };
-};
