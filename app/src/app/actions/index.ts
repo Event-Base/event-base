@@ -187,3 +187,88 @@ export async function getUserDetailsForOneEvent(id: string) {
 
 }
 
+export async function teamRegister(
+    currentState: { message: string; success: boolean | null },
+    formData: FormData
+) {
+    try {
+        const eventId = formData.get("event-id") as string;
+        const teamName = formData.get("team-name") as string;
+        const leaderEmail = formData.get("leader-email") as string;
+        if (!eventId || !teamName || !leaderEmail) {
+            if (teamName) {
+                console.log("Team name ");
+            }
+            if (!eventId) {
+                throw new Error("Event ID is required");
+            }
+            if (!leaderEmail) {
+                throw new Error("Leader email is required");
+            }
+
+
+
+        }
+        const event = await prisma.event.findUnique({
+            where: {
+                id: eventId,
+            }
+        });
+
+        const leader = await prisma.user.findUnique({
+            where: {
+                email: leaderEmail,
+            }
+        })
+        if (!leader) {
+            throw new Error("Leader not found");
+        }
+
+
+        // const maxParticipantsPerTeam = event?.maxParticipantsPerTeam ?? 0;
+        const memberEmails: string[] = Array.from({
+            length: event?.maxParticipantsPerTeam
+                ? event.maxParticipantsPerTeam - 1
+                : 0,
+        }).map((_, i) => formData.get(`member-${i + 1}-email`) as string);
+
+        const team = await prisma.team.create({
+            data: {
+                name: teamName,
+                leaderId: leader?.id ?? "",
+                eventId,
+            },
+        });
+
+
+
+
+
+        for (const email of memberEmails) {
+            const member = await prisma.user.findUnique({
+                where: { email },
+            });
+
+            if (member) {
+                await prisma.teamMember.create({
+                    data: {
+                        teamId: team.id,
+                        userId: member.id,
+                    },
+                });
+            }
+        }
+        const register = await prisma.registration.create({
+            data: {
+                userId: leader.id,
+                eventId,
+                attended: false,
+            },
+        })
+        return { message: "Team registered successfully", success: true };
+    } catch (error) {
+        console.error((error as any).message);
+        return { message: "Failed to register for the team", success: false };
+    }
+
+}
