@@ -120,10 +120,10 @@ const NavBar: React.FC = () => {
                             Events
                         </Link>
                         <Link
-                            href="/"
+                            href="/report"
                             className="block text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white text-lg py-2"
                         >
-                            Contact
+                            Report an issue
                         </Link>
                         {session ? (
                             <>
