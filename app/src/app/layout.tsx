@@ -4,6 +4,7 @@ import "./globals.css";
 import Providers from "@/components/layouts/Providers";
 import { Toaster } from "@/components/ui/toaster";
 import NavBar from "@/components/navbar/Navbar";
+import Footer from "@/components/footer/Footer";
 import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -40,6 +41,9 @@ export default function RootLayout({
                         <NavBar />
                     </nav>
                     {children}
+                    <footer>
+                        <Footer />
+                    </footer>
                     <Toaster />
                 </Providers>
             </body>
