@@ -12,7 +12,7 @@ export default async function Register({ params }: { params: any }) {
     where: {
       email: session?.user?.email ?? undefined,
     },
-  })) as {
+  })) as unknown as {
     id: string;
     name: string | null;
     email: string | null;
