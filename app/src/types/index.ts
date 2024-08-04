@@ -13,4 +13,5 @@ export type getIndividualEventDetailsProp = {
 export type InitialStateType = {
     message: string;
     success: boolean | null;
+    loading: boolean;
 }
