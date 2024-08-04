@@ -70,27 +70,27 @@ export async function createEvent(
                 isTeamEvent,
             },
         });
-        const coordinatorName = await prisma.user.findUnique({
-            where: {
-                email: email,
-            },
-            select: {
-                name: true,
-            },
-        });
+        // const coordinatorName = await prisma.user.findUnique({
+        //     where: {
+        //         email: email,
+        //     },
+        //     select: {
+        //         name: true,
+        //     },
+        // });
 
         await revalidatePath("/admin/events");
 
-        await resend.emails.send({
-            from: "Acme <onboarding@resend.dev>",
-            to: "someemail@something.com",
-            subject: "Your Event Has Been Added to Our Event Base Website",
-            react: EventAddedEmail({
-                eventName: name,
-                username: coordinatorName?.name ?? "",
-                inviteLink: "localhost:3000/coordinator",
-            }),
-        });
+        // await resend.emails.send({
+        //     from: "Acme <onboarding@resend.dev>",
+        //     to: "someemail@something.com",
+        //     subject: "Your Event Has Been Added to Our Event Base Website",
+        //     react: EventAddedEmail({
+        //         eventName: name,
+        //         username: coordinatorName?.name ?? "",
+        //         inviteLink: "localhost:3000/coordinator",
+        //     }),
+        // });
 
         return { message: "Event added successfully", success: true };
     } catch (error) {
@@ -151,9 +151,9 @@ export async function registerForEvent(eventId: string, userId: string) {
             },
         });
 
-        return { message: "Registered successfully", success: true };
+        return { message: "Registered successfully" , success : true };
     } catch (error: any) {
-        return { message: error.message, success: false };
+        return { message: error.message  , success : false};
     }
 }
 
@@ -185,6 +185,7 @@ export async function getUserDetailsForOneEvent(id: string) {
     return registeredUsers;
 }
 
+
 export async function teamRegister(
     currentState: { message: string; success: boolean | null },
     formData: FormData
@@ -193,41 +194,46 @@ export async function teamRegister(
         const eventId = formData.get("event-id") as string;
         const teamName = formData.get("team-name") as string;
         const leaderEmail = formData.get("leader-email") as string;
-        if (!eventId || !teamName || !leaderEmail) {
-            if (teamName) {
-                console.log("Team name ");
-            }
-            if (!eventId) {
-                throw new Error("Event ID is required");
-            }
-            if (!leaderEmail) {
-                throw new Error("Leader email is required");
-            }
+
+        if (!eventId) {
+            throw new Error("Event ID is required");
         }
+        if (!teamName) {
+            throw new Error("Team name is required");
+        }
+        if (!leaderEmail) {
+            throw new Error("Leader email is required");
+        }
+
         const event = await prisma.event.findUnique({
             where: {
                 id: eventId,
             },
         });
 
+        if (!event) {
+            throw new Error("Event not found");
+        }
+
         const leader = await prisma.user.findUnique({
             where: {
                 email: leaderEmail,
             },
         });
+
         if (!leader) {
             throw new Error("Leader not found");
         }
 
-        // const maxParticipantsPerTeam = event?.maxParticipantsPerTeam ?? 0;
+        const maxParticipantsPerTeam = event.maxParticipantsPerTeam ?? 0;
         const memberEmails: string[] = Array.from({
-            length: event?.maxParticipantsPerTeam ? event.maxParticipantsPerTeam - 1 : 0,
+            length: maxParticipantsPerTeam - 1,
         }).map((_, i) => formData.get(`member-${i + 1}-email`) as string);
 
         const team = await prisma.team.create({
             data: {
                 name: teamName,
-                leaderId: leader?.id ?? "",
+                leaderId: leader.id,
                 eventId,
             },
         });
@@ -246,7 +252,8 @@ export async function teamRegister(
                 });
             }
         }
-        const register = await prisma.registration.create({
+
+        await prisma.registration.create({
             data: {
                 userId: leader.id,
                 teamId: team.id,
@@ -254,10 +261,11 @@ export async function teamRegister(
                 attended: false,
             },
         });
+
         return { message: "Team registered successfully", success: true };
     } catch (error) {
         console.error((error as any).message);
-        return { message: "Failed to register for the team", success: false };
+        return { message: (error as any).message || "Failed to register for the team", success: false };
     }
 }
 
