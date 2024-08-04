@@ -1,10 +1,5 @@
 "use client";
-import React, { useState } from "react";
-import ThemeToggle from "../layouts/ThemeToggle/theme-toggle";
-import { signIn, signOut } from "@/auth";
-import { useSession } from "next-auth/react";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import React from "react";
 
 const Footer = () => {
   return (
