@@ -4,10 +4,9 @@ import getSession from "@/lib/getSession";
 import { redirect } from "next/navigation";
 export default async function Profile() {
     const session = await getSession();
-    // const events = [
-    //     { id: 1, name: "Event1", date: "2024-07-01" },
-    //     { id: 2, name: "Event2", date: "2024-08-15" },
-    // ];
+    if (!session) {
+        redirect("auth/signin?callbackUrl=/profile");
+    }
 
     async function getUserRegisteredEvents() {
         const userId = session?.user.id;
@@ -23,10 +22,8 @@ export default async function Profile() {
         return registrations.map((registration) => registration.event);
     }
     const events = await getUserRegisteredEvents();
+    
 
-    if (!session) {
-        redirect("auth/signin?callbackUrl=/profile");
-    }
     return (
         <div className="min-h-screen flex items-center">
             <div className="container mx-auto p-4">
@@ -64,7 +61,6 @@ export default async function Profile() {
                                 eventName={event.name}
                                 eventDate={event.date.toISOString().split("T")[0]}
                                 eventDesc={event.description}
-                            
                             />
                         ))}
                     </div>
