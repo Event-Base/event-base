@@ -51,7 +51,7 @@ export function RegisterButton({ event, user }: { event: any; user: any }) {
         <AlertDialog>
             <AlertDialogTrigger asChild>
                 <Button variant="outline" disabled={success}>
-                    Submit
+                    {loading ? "Loading..." : "Submit "}
                 </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
@@ -70,7 +70,7 @@ export function RegisterButton({ event, user }: { event: any; user: any }) {
                     <AlertDialogFooter>
                         <AlertDialogCancel>Cancel</AlertDialogCancel>
                         <AlertDialogAction>
-                            <Button type="submit">{loading ? "Loading..." : "Confirm"}</Button>
+                            <Button type="submit"> Confirm</Button>
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </form>
