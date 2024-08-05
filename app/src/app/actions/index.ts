@@ -80,6 +80,7 @@ export async function createEvent(
         // });
 
         await revalidatePath("/admin/events");
+        await revalidatePath("/events");
 
         // await resend.emails.send({
         //     from: "Acme <onboarding@resend.dev>",
@@ -151,9 +152,9 @@ export async function registerForEvent(eventId: string, userId: string) {
             },
         });
 
-        return { message: "Registered successfully" , success : true };
+        return { message: "Registered successfully", success: true };
     } catch (error: any) {
-        return { message: error.message  , success : false};
+        return { message: error.message, success: false };
     }
 }
 
@@ -184,7 +185,6 @@ export async function getUserDetailsForOneEvent(id: string) {
     );
     return registeredUsers;
 }
-
 
 export async function teamRegister(
     currentState: { message: string; success: boolean | null },
@@ -278,30 +278,27 @@ export async function createIsuue({
     issueName: string;
     description: string;
 }) {
-    try{
-        
+    try {
         const user = await prisma.user.findUnique({
             where: {
-                email
-            }
-        })
-        
-        if(!user){
-            throw new Error("user not found")
+                email,
+            },
+        });
+
+        if (!user) {
+            throw new Error("user not found");
         }
 
         const issue = await prisma.issues.create({
             data: {
-                title:issueName,
-                description:description,
-                userId:user.id
-            }
-
-        })
-        return {message: "Issue reported successfully"}
-    }
-    catch(error){
-        console.error(error)
-        return {message: "Failed to create issue"}
+                title: issueName,
+                description: description,
+                userId: user.id,
+            },
+        });
+        return { message: "Issue reported successfully" };
+    } catch (error) {
+        console.error(error);
+        return { message: "Failed to create issue" };
     }
 }
