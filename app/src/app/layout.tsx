@@ -22,20 +22,7 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en" className="custom-scrollbar">
-            <Script
-                strategy="lazyOnload"
-                src={`https://www.googletagmanager.com/gtag/js?id=${process.env.GOOGLE_ANALYTICS}`}
-            />
-            <Script id="ga-script" strategy="lazyOnload">
-                {`
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', '${process.env.GOOGLE_ANALYTICS}', {
-      page_path: window.location.pathname,
-    });
-        `}
-            </Script>
+            <Script defer src={process.env.WEBSITE_SRC} data-website-id={process.env.WEBSITE_ID}></Script>
             <body className={inter.className}>
                 <Providers>
                     <nav className="">
