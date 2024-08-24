@@ -26,9 +26,37 @@ export default async function IndiRegister({ event }: { event: any }) {
     image: string | null;
     phone: string | null;
   } | null;
+
+  const isRegistered = await prisma.registration.findFirst({
+    where: {
+      eventId: event.id,
+      userId: user?.id,
+    },
+  });
+  if (isRegistered) {
+    return (
+      <div className="pt-16 flex min-h-screen w-full flex-col bg-muted/40">
+        <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
+          <main className="container grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 mt-5">
+            <Card className=" max-w-3xl mx-auto">
+              <CardHeader>
+                <CardTitle>
+                  You have already registered for this event
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="mb-2">
+                  If you want to unregister, please contact the event organizer
+                </p>
+              </CardContent>
+            </Card>
+          </main>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="pt-16 flex min-h-screen w-full flex-col bg-muted/40">
-      {/* <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex" /> */}
       <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
         <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6" />
         <main className="container grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 mt-5">
