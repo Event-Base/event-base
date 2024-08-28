@@ -241,6 +241,15 @@ export async function teamRegister(
       length: maxParticipantsPerTeam - 1,
     }).map((_, i) => formData.get(`member-${i + 1}-email`) as string);
 
+    for(const email of memberEmails){
+      const member = await prisma.user.findUnique({
+        where: { email: email },
+      })
+      if(member){
+        throw new Error("Member not found")
+      }
+    }
+
     const team = await prisma.team.create({
       data: {
         name: teamName,
@@ -261,7 +270,6 @@ export async function teamRegister(
             userId: member.id,
           },
         });
-      }
     }
 
     await prisma.registration.create({
